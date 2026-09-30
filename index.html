@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>无畏契约：源能觉醒 — VALORANT: Radianite Awakening</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230f1923'/><path d='M5 23 L13 8 L17 8 L9 23 Z' fill='%23ff4655'/><path d='M16 23 L24 8 L28 8 L20 23 Z' fill='%23ece8e1'/></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f1923;--bg2:#131f2b;--bg3:#1b2733;--panel:#141e29;
+  --gold:#ece8e1;--gold-bright:#ffffff;--gold-dim:#93a1ac;
+  --red:#ff4655;--red-bright:#ff6b76;--red-dim:#7a1f28;
+  --blue:#1f6f8b;--blue-bright:#2ea8c9;
+  --purple:#7a3aa8;--green:#2a6a2a;--green-bright:#45c46a;
+  --fire:#ff6a2a;--fire-bright:#ff9a5a;
+  --lightning:#ffd166;--lightning-bright:#ffe6a8;
+  --ice:#3fd0d4;--ice-bright:#7fe6e9;
+  --phys:#8a97a3;--phys-bright:#c6cdd4;
+  --text:#c6cdd4;--text-dim:#7d8a95;--text-bright:#ece8e1;
+  --rare:#ffd166;--magic:#2ea8c9;--unique:#ff4655;--normal:#c0c0c0;
+  --border:#26333f;--border-bright:#3d4d5c;
+}
+html,body{
+  background:var(--bg);color:var(--text);
+  font-family:'Segoe UI','DIN Alternate','Roboto','Microsoft YaHei','PingFang SC',sans-serif;
+  overflow-x:hidden;min-height:100vh;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;-webkit-user-select:none;
+}
+body{
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(255,70,85,0.10) 0%,transparent 60%),
+    radial-gradient(ellipse at 50% 100%,rgba(46,168,201,0.07) 0%,transparent 50%),
+    var(--bg);
+  background-attachment:fixed;
+}
+
+/* LOADING */
+#loading{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s}
+#loading.gone{opacity:0;pointer-events:none}
+#loading .logo-icon{width:80px;height:80px;margin-bottom:16px;animation:pulse 2s ease-in-out infinite;background:center/60% no-repeat;background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M4 24 L14 6 L19 6 L9 24 Z' fill='%23ff4655'/><path d='M17 24 L27 6 L32 6 L22 24 Z' fill='%23ece8e1'/></svg>")}
+@keyframes pulse{0%,100%{opacity:.65;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+#loading .status{color:var(--gold);font-size:14px;letter-spacing:3px;animation:flicker 1.5s ease-in-out infinite}
+@keyframes flicker{0%,100%{opacity:.7}50%{opacity:1}}
+#loading .bar{width:240px;height:4px;background:var(--bg3);border-radius:2px;margin-top:16px;overflow:hidden}
+#loading .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--red),var(--gold));transition:width .3s;border-radius:2px}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:linear-gradient(180deg,rgba(15,25,35,0.98),rgba(15,25,35,0.9));border-bottom:1px solid var(--border);backdrop-filter:blur(4px)}
+.topbar-inner{max-width:500px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:8px 12px}
+.logo{display:flex;align-items:center;gap:6px}
+.logo-icon-s{width:26px;height:22px;background:center/contain no-repeat;background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 24'><path d='M3 22 L12 2 L17 2 L8 22 Z' fill='%23ff4655'/><path d='M17 22 L26 2 L31 2 L22 22 Z' fill='%23ece8e1'/></svg>")}
+.logo-text{font-size:12px;color:var(--gold);font-weight:bold;letter-spacing:2px}
+.topbar-info{font-size:11px;color:var(--text-dim);text-align:right;line-height:1.4}
+.topbar-info .area{color:var(--gold-dim)}
+
+/* CONTAINER */
+.game-container{max-width:500px;margin:0 auto;padding:8px}
+
+/* LEVEL BAR */
+.level-bar{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:8px 10px;margin-bottom:6px}
+.level-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.level-label{font-size:11px;color:var(--text-dim);letter-spacing:1px}
+.level-val{font-size:13px;color:var(--red-bright);font-weight:bold}
+.exp-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.exp-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-bright));transition:width .4s;border-radius:3px}
+
+/* BATTLEFIELD */
+.bf-wrap{position:relative;background:#070d13;border:2px solid var(--border-bright);border-radius:6px;overflow:hidden;margin-bottom:6px}
+#bf{display:block;width:100%;height:280px}
+.bf-overlay{position:absolute;top:6px;left:6px;right:6px;display:flex;justify-content:space-between;pointer-events:none}
+.bf-stat{background:rgba(15,25,35,0.82);border:1px solid var(--border);border-radius:3px;padding:3px 8px;font-size:11px}
+.bf-stat.k{color:var(--red-bright)}
+.bf-stat.t{color:var(--gold)}
+.bf-boss-bar{position:absolute;bottom:0;left:0;right:0;height:4px;background:var(--bg3)}
+.bf-boss-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--red-bright));transition:width .3s}
+.bf-boss-name{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--red-bright);font-weight:bold;text-shadow:0 0 6px rgba(255,70,85,0.8);display:none}
+.bf-boss-name.show{display:block}
+
+/* DEFENSE */
+.def-bar{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:6px 10px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.def-label{font-size:11px;color:var(--text-dim)}
+.def-track{flex:1;height:8px;background:var(--bg3);border-radius:4px;border:1px solid var(--border);overflow:hidden}
+.def-fill{height:100%;border-radius:4px;transition:width .3s;background:linear-gradient(90deg,var(--red),var(--lightning),var(--green-bright));background-size:300% 100%;background-position:var(--dp,100%) 0}
+.def-val{font-size:12px;color:var(--gold);min-width:36px;text-align:right;font-weight:bold}
+
+/* WEAPON PANEL */
+.weapon-panel{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:8px 10px;margin-bottom:6px}
+.wpn-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.wpn-title{font-size:12px;color:var(--gold);letter-spacing:2px;font-weight:bold}
+.wpn-tier{font-size:10px;padding:2px 6px;border-radius:3px;font-weight:bold}
+.wpn-tier.normal{background:#26333f;color:var(--normal)}
+.wpn-tier.magic{background:#0e3340;color:var(--magic)}
+.wpn-tier.rare{background:#4a3a00;color:var(--rare)}
+.wpn-tier.unique{background:#4d1219;color:var(--unique)}
+.wpn-info{display:flex;align-items:center;gap:10px}
+.wpn-icon{font-size:32px;line-height:1}
+.wpn-details{flex:1;min-width:0}
+.wpn-name{font-size:13px;font-weight:bold;margin-bottom:2px;color:var(--text-bright)}
+.wpn-name .en{font-size:9px;color:var(--text-dim);letter-spacing:2px;margin-left:4px}
+.wpn-desc{font-size:10px;color:var(--text-dim);line-height:1.4}
+.wpn-stats{font-size:10px;margin-top:4px}
+.wpn-stat{display:inline-block;margin-right:8px}
+.wpn-stat .val{color:var(--text-bright);font-weight:bold}
+.up-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;border-top:1px solid var(--border);padding-top:6px}
+.up-chip{font-size:9px;border:1px solid var(--border);border-radius:3px;padding:2px 6px;background:rgba(255,255,255,.02);color:var(--text-dim)}
+.up-chip b{color:var(--text-bright)}
+.up-chip.core{background:rgba(255,106,42,.08)}
+.up-chip.special{background:rgba(255,70,85,.12)}
+.up-empty{font-size:9px;color:var(--text-dim)}
+
+/* SKILL BAR */
+.skill-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px}
+.skill-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:6px 4px;text-align:center;position:relative;overflow:hidden;cursor:pointer;transition:all .2s}
+.skill-card:hover{border-color:var(--gold-dim)}
+.skill-card .key{position:absolute;top:2px;right:3px;font-size:9px;color:var(--gold-dim);font-weight:bold}
+.skill-card .icon{font-size:20px;line-height:1}
+.skill-card .name{font-size:9px;color:var(--text-dim);margin-top:2px}
+.skill-card .cd-overlay{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.72);font-size:10px;color:var(--text);transform:translateY(100%);transition:transform .2s;padding:2px 0}
+.skill-card.on-cd .cd-overlay{transform:translateY(0)}
+
+/* AUTO BADGE */
+.auto-badge{position:absolute;top:6px;left:50%;transform:translateX(-50%);background:rgba(42,106,42,0.85);border:1px solid var(--green-bright);border-radius:3px;padding:2px 10px;font-size:10px;color:#a8f0bd;letter-spacing:1px;pointer-events:none;animation:autoPulse 2s ease-in-out infinite}
+@keyframes autoPulse{0%,100%{opacity:.75}50%{opacity:1}}
+
+/* SQUAD PANEL */
+.squad-panel{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:8px 10px;margin-bottom:6px}
+.squad-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.squad-title{font-size:12px;color:var(--gold);letter-spacing:2px;font-weight:bold}
+.squad-counts{font-size:10px;color:var(--text-dim)}
+.squad-counts b{color:var(--text-bright)}
+.squad-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.squad-card{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:5px 3px;text-align:center}
+.squad-card .s-icon{font-size:18px;line-height:1}
+.squad-card .s-name{font-size:9px;color:var(--text-dim);margin-top:2px}
+.squad-card .s-count{font-size:12px;color:var(--text-bright);font-weight:bold}
+.squad-card.empty .s-icon{filter:grayscale(1) brightness(.45)}
+.squad-card.empty .s-count{color:var(--text-dim)}
+.beacon-row{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:10px;color:var(--text-dim)}
+.beacon-track{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;border:1px solid var(--border)}
+.beacon-fill{height:100%;background:linear-gradient(90deg,var(--red-dim),var(--red));width:0%}
+
+/* STATUS */
+.status-panel{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:8px 10px;margin-bottom:6px;display:grid;grid-template-columns:1fr 1fr;gap:4px 10px}
+.stat-row{display:flex;justify-content:space-between;font-size:11px}
+.stat-label{color:var(--text-dim)}
+.stat-val{color:var(--text-bright);font-weight:bold}
+.stat-val.hp{color:var(--red-bright)}
+.stat-val.mp{color:var(--blue-bright)}
+
+/* CURRENCY */
+.curr-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.curr-item{display:flex;align-items:center;gap:3px;background:var(--panel);border:1px solid var(--border);border-radius:3px;padding:3px 6px;font-size:10px}
+.curr-icon{font-size:13px}
+.curr-count{color:var(--text-bright);font-weight:bold}
+
+/* ACTIONS */
+.act-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}
+.btn{padding:10px;border:1px solid var(--border);border-radius:4px;background:var(--panel);color:var(--text);font-family:inherit;font-size:12px;cursor:pointer;transition:all .2s;text-align:center;letter-spacing:1px}
+.btn:hover{border-color:var(--gold-dim);color:var(--gold)}
+.btn.primary{background:linear-gradient(180deg,rgba(255,70,85,.22),var(--bg3));border-color:var(--red-dim);color:var(--red-bright)}
+.btn.gold{background:linear-gradient(180deg,rgba(236,232,225,0.10),transparent);border-color:var(--gold-dim);color:var(--gold)}
+
+/* BRIEFING */
+.briefing{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:10px;margin-bottom:6px}
+.briefing h3{font-size:13px;color:var(--gold);margin-bottom:6px;border-bottom:1px solid var(--border);padding-bottom:4px;letter-spacing:1px}
+.briefing p{font-size:11px;color:var(--text-dim);line-height:1.7}
+.briefing .hint{margin-top:8px;padding:6px;background:var(--bg3);border-radius:3px;font-size:10px;color:var(--gold-dim);line-height:1.7}
+
+/* FOOTER */
+.footer{text-align:center;padding:12px 8px;font-size:10px;color:var(--text-dim);border-top:1px solid var(--border);margin-top:8px;line-height:1.7}
+.footer a{color:var(--gold-dim);text-decoration:none}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;z-index:500;background:rgba(3,8,13,0.88);display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.show{display:flex}
+.modal{background:var(--panel);border:2px solid var(--border-bright);border-radius:8px;padding:18px;max-width:400px;width:100%;max-height:84vh;overflow-y:auto;position:relative}
+.modal h2{font-size:15px;color:var(--gold);margin-bottom:6px;text-align:center;letter-spacing:2px}
+.modal .sub{text-align:center;font-size:10px;color:var(--text-dim);margin-bottom:12px;line-height:1.6}
+.modal-close{position:absolute;top:8px;right:12px;background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer}
+
+/* WEAPON SELECT */
+.weapon-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .18s;display:flex;gap:12px;align-items:flex-start}
+.weapon-card:hover{border-color:var(--red);transform:translateY(-2px);background:#1d2a37}
+.weapon-card .wc-icon{font-size:32px;line-height:1}
+.weapon-card .wc-body{flex:1;min-width:0}
+.weapon-card .wc-name{font-size:15px;font-weight:bold;color:var(--text-bright)}
+.weapon-card .wc-en{font-size:9px;color:var(--text-dim);letter-spacing:2px;margin-left:5px}
+.weapon-card .wc-role{font-size:10px;color:var(--red-bright);margin:3px 0 4px;letter-spacing:1px}
+.weapon-card .wc-desc{font-size:11px;color:var(--text-dim);line-height:1.5}
+.weapon-card .wc-stats{font-size:10px;margin-top:6px;color:var(--text-bright);line-height:1.6}
+.weapon-card .wc-stats span{display:inline-block;margin-right:9px}
+.weapon-card .wc-tag{display:inline-block;font-size:9px;color:var(--gold-dim);border:1px solid var(--border-bright);border-radius:2px;padding:1px 5px;margin-top:6px}
+
+/* UPGRADE DRAFT */
+.upgrade-card{display:flex;gap:10px;align-items:flex-start;background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:6px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:all .18s;position:relative}
+.upgrade-card:hover{border-color:var(--gold);transform:translateX(3px);background:#1d2a37}
+.upgrade-card.special{box-shadow:0 0 16px rgba(255,70,85,.20)}
+.upgrade-card .uc-icon{font-size:26px;line-height:1.1}
+.upgrade-card .uc-body{flex:1;min-width:0}
+.upgrade-card .uc-name{font-size:13px;font-weight:bold;margin-bottom:3px}
+.upgrade-card .uc-kind{font-size:9px;padding:1px 5px;border-radius:2px;margin-left:6px;vertical-align:middle;background:#26333f;color:var(--text-dim);font-weight:normal}
+.upgrade-card .uc-kind.core{background:rgba(255,106,42,.18);color:var(--fire-bright)}
+.upgrade-card .uc-kind.special{background:rgba(255,70,85,.22);color:var(--red-bright)}
+.upgrade-card .uc-lv{font-size:10px;color:var(--text-dim);margin-left:6px;font-weight:normal}
+.upgrade-card .uc-desc{font-size:11px;color:var(--text-dim);line-height:1.5}
+.upgrade-card .uc-next{font-size:11px;color:var(--green-bright);margin-top:4px}
+.upgrade-card .uc-key{position:absolute;top:8px;right:10px;font-size:10px;color:var(--gold-dim);border:1px solid var(--border);border-radius:3px;padding:0 4px}
+
+/* INVENTORY */
+.inv-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin:10px 0}
+.inv-slot{aspect-ratio:1;background:var(--bg3);border:1px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;position:relative}
+.inv-slot.has-item{border-color:var(--magic)}
+.inv-slot.has-item.rare{border-color:var(--rare)}
+.inv-slot.has-item.unique{border-color:var(--unique)}
+.inv-slot .lvl{position:absolute;bottom:1px;right:2px;font-size:8px;color:var(--text-dim)}
+
+/* TOOLTIP */
+.tooltip{position:fixed;z-index:600;background:var(--panel);border:1px solid var(--gold-dim);border-radius:4px;padding:10px;max-width:200px;pointer-events:none;display:none}
+.tooltip.show{display:block}
+.tooltip .name{font-size:12px;font-weight:bold;margin-bottom:4px}
+.tooltip .type{font-size:10px;color:var(--text-dim);margin-bottom:6px}
+.tooltip .mods{font-size:10px;line-height:1.5}
+.tooltip .mod{color:var(--magic)}
+.tooltip .mod.plus{color:var(--green-bright)}
+
+/* NOTIF */
+.notif{position:fixed;top:50px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--red);border-radius:4px;padding:8px 16px;z-index:400;font-size:12px;color:var(--gold);animation:notifIn .3s,notifOut .3s 2.5s forwards;pointer-events:none;white-space:nowrap}
+@keyframes notifIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1}}
+@keyframes notifOut{to{opacity:0;transform:translateX(-50%) translateY(-10px)}}
+
+@media(min-width:520px){
+  .game-container{padding:12px}
+  #bf{height:320px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="logo-icon"></div>
+  <div class="status" id="load-status">建立源能连接...</div>
+  <div class="bar"><div class="bar-fill" id="load-bar"></div></div>
+</div>
+
+<!-- GAME -->
+<div class="game-container" id="game" style="display:none">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="logo"><div class="logo-icon-s"></div><div class="logo-text">无畏契约：源能觉醒</div></div>
+      <div class="topbar-info"><span class="area" id="area-name">亚海悬城</span><br><span id="act-label">ACT 01</span></div>
+    </div>
+  </div>
+
+  <div class="level-bar">
+    <div class="level-row"><span class="level-label">战地研究</span><span class="level-val" id="level-val">0</span></div>
+    <div class="exp-bar"><div class="exp-fill" id="exp-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="bf-wrap">
+    <canvas id="bf" width="480" height="280"></canvas>
+    <div class="bf-overlay">
+      <div class="bf-stat k">歼敌 <span id="kill-count">0</span></div>
+      <div class="bf-stat t">任务 <span id="timer">01:35</span></div>
+    </div>
+    <div class="auto-badge" id="auto-badge">特工自动开火 · A/D 移动</div>
+    <div class="bf-boss-bar"><div class="bf-boss-bar-fill" id="boss-hp-fill" style="width:100%"></div></div>
+    <div class="bf-boss-name" id="boss-name"></div>
+  </div>
+
+  <div class="def-bar">
+    <span class="def-label">据点防线</span>
+    <div class="def-track"><div class="def-fill" id="def-fill" style="--dp:100%;width:100%"></div></div>
+    <span class="def-val" id="def-val">100%</span>
+  </div>
+
+  <!-- SQUAD PANEL -->
+  <div class="squad-panel">
+    <div class="squad-hdr">
+      <span class="squad-title">⚔ 特工小队</span>
+      <span class="squad-counts">队员 <b id="sq-inf">0</b> / 重装 <b id="sq-heavy">0</b> / 损失 <b id="sq-loss">0</b></span>
+    </div>
+    <div class="squad-grid" id="squad-grid"></div>
+    <div class="beacon-row">
+      <span>下一次补给</span>
+      <div class="beacon-track"><div class="beacon-fill" id="beacon-fill"></div></div>
+      <span id="beacon-txt">0.0s</span>
+      <span style="color:var(--gold-dim)">歼敌/3s <b id="kill-rate" style="color:var(--red-bright)">0</b></span>
+    </div>
+  </div>
+
+  <!-- FIELD RESEARCH PANEL -->
+  <div class="weapon-panel" id="weapon-panel">
+    <div class="wpn-hdr">
+      <span class="wpn-title">🧪 战地研究</span>
+      <span class="wpn-tier normal" id="wpn-tier">等级 0</span>
+    </div>
+    <div class="wpn-info" id="wpn-info"></div>
+    <div class="up-chips" id="up-chips"></div>
+  </div>
+
+  <!-- TACTICAL ABILITIES QWER -->
+  <div class="skill-bar" id="skill-bar"></div>
+
+  <div class="status-panel" id="status-panel"></div>
+  <div class="curr-bar" id="curr-bar"></div>
+
+  <div class="act-row">
+    <button class="btn primary" id="btn-auto">⚔ 部署小队</button>
+    <button class="btn gold" id="btn-takeover">Ⅱ 暂停</button>
+  </div>
+  <div class="act-row">
+    <button class="btn" id="btn-weapon">🧪 查看研究路线</button>
+    <button class="btn" id="btn-inv">🎒 装备库 (I)</button>
+  </div>
+  <div class="act-row" style="grid-template-columns:1fr">
+    <button class="btn" id="btn-passive">🌐 战术专精 (P)</button>
+  </div>
+
+  <div class="briefing">
+    <h3 id="brief-title">01 作战简报</h3>
+    <p id="brief-text">以 1 名步枪手开局，在 95 秒内通过左右机动领取补给、扩编小队并顶住持续增压的敌潮。首领会在终局前抵达，必须在倒计时结束前击杀。</p>
+    <div class="hint">⌨️ <b>A / D</b> 或 <b>← / →</b> 左右移动整支小队，鼠标与触控可直接拖动 ｜ 小队自动瞄准、自动开火<br>📦 补给箱穿过阵线时，站在左/右半场选择对应卡牌 ｜ <b>Q/W/E/R</b> 释放战术技能 ｜ <b>Space</b> 部署 / 暂停<br>🔼 击杀积累战地经验；升级时从随机研究、装备与防线强化中三选一</div>
+  </div>
+
+  <div class="footer">无畏契约：源能觉醒 · 非官方同人 · VALORANT 及相关名称归 Riot Games 所有 · 玩法灵感来自 <a href="https://starcraft-shooter-2026.pages.dev" target="_blank">StarCraft: Ashfall</a></div>
+</div>
+
+<!-- RESEARCH HELP MODAL -->
+<div class="modal-bg" id="modal-weapon">
+  <div class="modal">
+    <h2>🧪 战地研究路线</h2>
+    <p class="sub">目标站同款：击杀获取经验，升级时随机提供三张研究卡；卡牌会强化全队或当前兵种。</p>
+    <div id="weapon-list"></div>
+    <button class="btn" style="width:100%;margin-top:10px" id="btn-research-close">关闭</button>
+  </div>
+</div>
+
+<!-- UPGRADE DRAFT MODAL -->
+<div class="modal-bg" id="modal-drop">
+  <div class="modal">
+    <h2>⚡ 战地升级 · 三选一</h2>
+    <p class="sub" id="drop-hint">从当前可用的研究、装备与防线强化中随机抽取</p>
+    <div id="drop-list"></div>
+    <p class="sub" style="margin:8px 0 0">点击卡牌或按 <b>1 / 2 / 3</b> 选择</p>
+  </div>
+</div>
+
+<!-- INVENTORY MODAL -->
+<div class="modal-bg" id="modal-inv">
+  <div class="modal">
+    <h2>🎒 装备库</h2>
+    <div class="inv-grid" id="inv-grid"></div>
+    <div style="margin-top:10px">
+      <div class="stat-row"><span class="stat-label">信用点</span><span class="stat-val" id="inv-chaos">0</span></div>
+      <div class="stat-row"><span class="stat-label">王国币</span><span class="stat-val" id="inv-alt">0</span></div>
+      <div class="stat-row"><span class="stat-label">源能点</span><span class="stat-val" id="inv-exalt">0</span></div>
+    </div>
+    <button class="btn" style="width:100%;margin-top:10px" id="btn-inv-close">关闭</button>
+  </div>
+</div>
+
+<!-- PASSIVE MODAL -->
+<div class="modal-bg" id="modal-passive">
+  <div class="modal">
+    <h2>🌐 战术专精</h2>
+    <p class="sub">可用专精点: <span id="pt-avail">0</span></p>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px" id="pt-grid"></div>
+    <button class="btn" style="width:100%;margin-top:10px" id="btn-pt-close">关闭</button>
+  </div>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip" id="tooltip">
+  <div class="name"></div><div class="type"></div><div class="mods"></div>
+</div>
+
+<script>
+// ============================================================
+//  无畏契约：源能觉醒 — VALORANT: Radianite Awakening
+//  战斗状态机对齐 StarCraft: Ashfall（2026-09-30 在线版本）
+// ============================================================
+
+const CW=480, CH=280;
+// 战场保持 Ashfall 式结构：敌人从远端向水平防线推进，A/D 左右移动整支小队。
+const LINE_Y=CH-48, PLAYER_Y=CH-25;
+const LINE_X=40;
+const MISSION_TIME=95, BOSS_AT=83.5;
+// Ashfall 的补给时刻（原始时间轴的 2.5–9.5 秒教学段被拉长 12/7）。
+const SUPPLY_TIMES=[2.5,8.5,14.5,20,27,35,43,52,61,71];
+// 在线版 18 段虫潮。2D 画布使用密度系数压缩同屏实体数，但时序、车道、持续时间和压力曲线一致。
+const BATTLE_DENSITY=0.06;
+const WAVE_SCHEDULE=[
+  {at:4,count:6,over:.6},{at:7.5,count:10,over:.8},{at:11,count:16,over:1},
+  {at:14.5,count:24,over:1},{at:18,count:34,over:1.2},{at:21.5,count:46,over:1.2},
+  {at:25,count:60,over:1.4},{at:28.5,count:80,over:1.5},
+  {at:34.5,count:60,over:.9,lane:0,banelings:80},
+  {at:40.5,count:200,over:2,hydralisks:4,roaches:6},
+  {at:46.5,count:250,over:1,lane:0,hydralisks:4,banelings:16,roaches:12},
+  {at:52.5,count:300,over:2.2,hydralisks:4,banelings:10,roaches:8,aberrations:2},
+  {at:58.5,count:340,over:1.2,lane:0,banelings:44,roaches:15,aberrations:3},
+  {at:65.5,count:400,over:2.6,hydralisks:6,banelings:14,roaches:12,aberrations:3},
+  {at:72.5,count:400,over:3,hydralisks:6,banelings:18,roaches:14,aberrations:2},
+  {at:78.5,count:480,over:1.4,lane:0,hydralisks:6,banelings:56,roaches:20},
+  {at:83,count:500,over:1.5,lane:0,banelings:60,roaches:22},
+  {at:87,count:520,over:3,hydralisks:6,banelings:20,roaches:15}
+];
+const XP_STEPS=[280,420,930,1420,2330,3420,2900,2760,3020,5020];
+
+// ─── 主武器（出生三选一） ───────────────────────────────────
+// 三把枪共用同一套「弹丸」射击系统，差异来自基础数值：
+//   狂徒 = 单发高伤 / 奥丁 = 高射速自带穿透 / 判官 = 多弹丸近距爆发
+const WEAPONS = {
+  vandal:{
+    id:'vandal', name:'狂徒', en:'VANDAL', icon:'🔫', role:'步枪', tier:'unique',
+    desc:'全自动步枪 · 单发高伤，弹道稳定，中远程通吃',
+    color:'#ece8e1', bulletColor:'#ffe6a8',
+    dmg:30, fireInterval:0.35, projectiles:1, spread:0.05, bulletSpeed:11, bulletSize:3.6,
+    pierce:0, chain:0, range:330,
+    tag:'单发高伤 · 精准点射',
+  },
+  odin:{
+    id:'odin', name:'奥丁', en:'ODIN', icon:'💥', role:'轻机枪', tier:'rare',
+    desc:'轻机枪 · 极高射速压制，子弹自带穿透',
+    color:'#2ea8c9', bulletColor:'#7fe0ff',
+    dmg:15, fireInterval:0.135, projectiles:1, spread:0.09, bulletSpeed:12, bulletSize:3,
+    pierce:1, chain:0, range:340,
+    tag:'高射速 · 自带穿透 +1',
+  },
+  judge:{
+    id:'judge', name:'判官', en:'JUDGE', icon:'🌟', role:'霰弹枪', tier:'magic',
+    desc:'霰弹枪 · 一次打出 5 发扩散弹丸，贴脸爆发极高',
+    color:'#ff9a3c', bulletColor:'#ffc46a',
+    dmg:12, fireInterval:0.68, projectiles:5, spread:0.5, bulletSpeed:8.6, bulletSize:3.2,
+    pierce:0, chain:0, range:200,
+    tag:'5 发扩散 · 近距爆发',
+  },
+};
+const TIER_CN={normal:'标准',magic:'精选',rare:'豪华',unique:'尊贵'};
+
+// ─── 源能强化（升级三选一） ─────────────────────────────────
+// kind: core = 必定出现的核心强化；normal = 常规强化；special = 低几率特殊强化
+const UPGRADES = {
+  dmg:{ id:'dmg', name:'伤害提升', icon:'💥', kind:'core', color:'#ff6a2a', weight:0,
+    desc:'每级伤害 +20%',
+    stat:function(l){ return '伤害 x'+(1+0.2*l).toFixed(1); } },
+  speed:{ id:'speed', name:'攻速提升', icon:'⚡', kind:'core', color:'#ffd166', weight:0,
+    desc:'每级攻速 +20%',
+    stat:function(l){ return '射速 x'+(1+0.2*l).toFixed(1); } },
+  multishot:{ id:'multishot', name:'多重射击', icon:'🎯', kind:'normal', color:'#2ea8c9', weight:26,
+    desc:'每级投射物 +1（一次打出更多弹丸）',
+    stat:function(l){ return '投射物 '+shotProjectilesAt(l); } },
+  pierce:{ id:'pierce', name:'子弹穿透', icon:'🔩', kind:'normal', color:'#c8aa6e', weight:24,
+    desc:'子弹穿透 +1（命中后继续飞行）',
+    stat:function(l){ return '穿透 '+shotPierceAt(l); } },
+  chain:{ id:'chain', name:'子弹连锁', icon:'🔗', kind:'normal', color:'#b06ae8', weight:24,
+    desc:'子弹连锁 +1（命中后弹射到附近敌人）',
+    stat:function(l){ return '连锁 '+shotChainAt(l); } },
+  headshot:{ id:'headshot', name:'爆头专精', icon:'💀', kind:'special', color:'#ff4655', weight:4,
+    desc:'暴击率 +12% ｜ 暴击伤害 x2.5',
+    stat:function(l){ return '暴击率 '+Math.round(Math.min(0.75,0.12*l)*100)+'%'; } },
+  incendiary:{ id:'incendiary', name:'燃烧弹', icon:'🔥', kind:'special', color:'#ff6a2a', weight:3,
+    desc:'命中附加 3 秒灼烧持续伤害',
+    stat:function(l){ return '灼烧 '+Math.round(4+3*l)+'/s'; } },
+  shock:{ id:'shock', name:'震荡弹', icon:'❄️', kind:'special', color:'#3fd0d4', weight:3,
+    desc:'命中概率震荡（定身）1.5 秒',
+    stat:function(l){ return '震荡几率 '+Math.round(Math.min(0.5,0.2+0.05*l)*100)+'%'; } },
+  stim:{ id:'stim', name:'兴奋剂', icon:'💉', kind:'special', color:'#45c46a', weight:3,
+    desc:'生命回复 +2/s ｜ 移速 +8%',
+    stat:function(l){ return '回复 +'+(2*l)+'/s · 移速 +'+(8*l)+'%'; } },
+  ultcharge:{ id:'ultcharge', name:'大招充能', icon:'🔋', kind:'special', color:'#ffd166', weight:2,
+    desc:'战术技能冷却 -15%',
+    stat:function(l){ return '冷却 -'+Math.round(Math.min(0.6,0.15*l)*100)+'%'; } },
+  fortify:{ id:'fortify', name:'据点加固', icon:'🛡️', kind:'special', color:'#ece8e1', weight:2,
+    desc:'防线耐久上限 +8% 并立即修复',
+    stat:function(l){ return '防线上限 +'+(8*l)+'%'; } },
+};
+// 伤害 / 攻速 恒定出现在三选一里；第三张牌从下面的池子按权重抽取
+const CORE_UPGRADE_IDS=['dmg','speed'];
+const THIRD_POOL=Object.keys(UPGRADES).filter(function(id){return UPGRADES[id].kind!=='core';});
+const SPECIAL_WEIGHT=THIRD_POOL.reduce(function(s,id){return s+(UPGRADES[id].kind==='special'?UPGRADES[id].weight:0);},0);
+const THIRD_WEIGHT=THIRD_POOL.reduce(function(s,id){return s+UPGRADES[id].weight;},0);
+const CRIT_MULT=2.5, BURN_TIME=3;
+
+// ─── 战术技能（Q/W/E/R） ────────────────────────────────────
+const TACTICAL = {
+  q:{name:'兴奋剂', icon:'💉', cd:8, cost:10, desc:'伤害+30% 攻速+15%', type:'buff', val:0.3},
+  w:{name:'哨戒炮台', icon:'🔫', cd:12, cost:15, desc:'部署自动炮台协同作战', type:'summon', val:1},
+  e:{name:'霓虹疾走', icon:'⚡', cd:15, cost:12, desc:'大幅提升移速', type:'speed', val:2.0},
+  r:{name:'轨道打击', icon:'🛰️', cd:20, cost:25, desc:'天降轨道炮毁灭全屏', type:'nuke', val:100},
+};
+
+// ─── 特工小队（自动补给增援） ───────────────────────────────
+const SQUAD_TYPES = {
+  rookie:{name:'新兵',icon:'🪖',hp:70,dmg:6,speed:0.7,range:34,color:'#4a8a4a',heavy:false,cost:8},
+  rifleman:{name:'步枪手',icon:'🎯',hp:40,dmg:10,speed:0.9,range:76,color:'#b0b0b0',heavy:false,cost:10},
+  sniper:{name:'狙击手',icon:'🔭',hp:52,dmg:15,speed:1.0,range:64,color:'#7a9ac8',heavy:false,cost:14},
+  heavy:{name:'重装兵',icon:'🛡️',hp:170,dmg:22,speed:0.45,range:38,color:'#8a8a6a',heavy:true,cost:22},
+};
+// 自动补充优先级：先顶住前排重装，再补炮灰，最后补远程
+const SQUAD_PRIORITY = ['heavy','rookie','rifleman','sniper'];
+
+// ─── 敌方单位 ───────────────────────────────────────────────
+const MONSTERS = {
+  drone:{name:'侦察无人机',hp:30,speed:0.8,dmg:5,color:'#4a8a4a',size:14,exp:8},
+  rusher:{name:'突袭兵',hp:20,speed:1.2,dmg:8,color:'#8a4a4a',size:12,exp:6},
+  brute:{name:'重装兵',hp:40,speed:0.6,dmg:10,color:'#4a6a8a',size:16,exp:10},
+  hound:{name:'猎犬',hp:25,speed:1.0,dmg:6,color:'#8a6a4a',size:13,exp:7},
+  crawler:{name:'爬行者',hp:15,speed:1.5,dmg:4,color:'#6a4a6a',size:10,exp:5},
+  sentinel:{name:'哨兵',hp:22,speed:1.0,dmg:7,color:'#aaaaaa',size:12,exp:6},
+  zealot:{name:'狂信徒',hp:28,speed:0.9,dmg:8,color:'#8a4a6a',size:12,exp:8},
+  wraith:{name:'幽影',hp:60,speed:0.8,dmg:15,color:'#8a2a2a',size:18,exp:18},
+  colossus:{name:'铁壁机兵',hp:80,speed:0.4,dmg:20,color:'#8a8a6a',size:22,exp:25},
+  mutant:{name:'源能变异体',hp:40,speed:1.0,dmg:10,color:'#6a8a4a',size:15,exp:10},
+  knight:{name:'王国骑士',hp:55,speed:0.7,dmg:14,color:'#c8aa4a',size:16,exp:14},
+  elite:{name:'精英特工',hp:70,speed:0.8,dmg:18,color:'#c84a8a',size:18,exp:20},
+  boss_add:{name:'精英护卫',hp:50,speed:0.9,dmg:12,color:'#c88a4a',size:16,exp:15},
+};
+
+// ─── 战场（无畏契约地图） ───────────────────────────────────
+const AREAS = [
+  {name:'亚海悬城',act:1,monsters:['drone','rusher','brute'],boss:'巨型机兵',bg:'#1a2a3a'},
+  {name:'源工重镇',act:1,monsters:['hound','crawler','drone'],boss:'重镇守卫',bg:'#2a1a1a'},
+  {name:'隐世修所',act:1,monsters:['sentinel','zealot','knight'],boss:'修所长老',bg:'#2a1a2a'},
+  {name:'霓虹町',act:2,monsters:['zealot','wraith','sentinel'],boss:'霓虹领主',bg:'#2a1a1a'},
+  {name:'森寒冬港',act:2,monsters:['colossus','hound','mutant'],boss:'寒港巨像',bg:'#1a1a2a'},
+  {name:'微风岛屿',act:2,monsters:['mutant','knight','elite'],boss:'岛屿暴君',bg:'#1a2a1a'},
+  {name:'裂变峡谷',act:3,monsters:['knight','wraith','elite'],boss:'裂变化身',bg:'#2a0a0a'},
+  {name:'深海明珠',act:3,monsters:['boss_add','elite','colossus'],boss:'深渊主宰',bg:'#0a1a2a'},
+  {name:'莲华古城',act:3,monsters:['sentinel','elite','wraith'],boss:'古城之影',bg:'#1a0a2a'},
+];
+
+// ─── 战术专精节点 ───────────────────────────────────────────
+const PASSIVES = [
+  {id:'hp1',name:'体能I',icon:'❤️',stat:'hp',val:20},
+  {id:'hp2',name:'体能II',icon:'❤️',stat:'hp',val:30},
+  {id:'dps1',name:'火力I',icon:'⚔️',stat:'dps',val:5},
+  {id:'dps2',name:'火力II',icon:'⚔️',stat:'dps',val:8},
+  {id:'mana1',name:'能量I',icon:'💧',stat:'mana',val:15},
+  {id:'armor1',name:'护甲I',icon:'🛡️',stat:'armor',val:10},
+  {id:'eva1',name:'身法I',icon:'💨',stat:'evasion',val:8},
+  {id:'crit1',name:'爆头I',icon:'💥',stat:'crit',val:5},
+  {id:'spd1',name:'射速I',icon:'⚡',stat:'speed',val:5},
+  {id:'hp3',name:'体能III',icon:'❤️',stat:'hp',val:40},
+  {id:'dps3',name:'火力III',icon:'⚔️',stat:'dps',val:12},
+  {id:'cd1',name:'冷却I',icon:'⏱️',stat:'cd',val:5},
+  {id:'loot1',name:'拾荒I',icon:'💰',stat:'loot',val:10},
+  {id:'regen1',name:'再生I',icon:'💚',stat:'regen',val:1},
+  {id:'boss1',name:'首领猎手I',icon:'👑',stat:'boss',val:15},
+];
+
+// ─── 游戏状态 ───────────────────────────────────────────────
+const G = {
+  level:0, exp:0, expToNext:XP_STEPS[0],
+  hp:100, maxHp:100, mana:50, maxMana:50,
+  armor:0, evasion:0,
+  playerX:CW/2, targetX:CW/2, moveDir:0,
+  // 主武器（出生三选一）
+  weapon:WEAPONS.vandal,
+  // 源能强化等级表：{dmg:2, speed:1, multishot:1, pierce:0, ...}
+  up:{ dmg:0, speed:0, multishot:0, pierce:0, chain:0,
+       headshot:0, incendiary:0, shock:0, stim:0, ultcharge:0, fortify:0 },
+  // 战术冷却
+  tacCD:{q:0,w:0,e:0,r:0},
+  // 战斗
+  monsters:[], projectiles:[], efts:[], dmgNums:[], loot:[],
+  killCount:0, timer:MISSION_TIME, timerMax:MISSION_TIME, elapsed:0,
+  defense:800, defenseMax:800,
+  bossActive:false, boss:null, bossDefeated:false,
+  spawnTimer:0, spawnInterval:2.0, spawnDebt:0, spawnQueue:[], activeWaves:[], wave:0, nextWave:0,
+  killWindow:[],
+  // 空投补给（gate = 正在下落的补给，beaconInterval = 下一次补给间隔）
+  beaconTimer:SUPPLY_TIMES[0], beaconInterval:0, gate:null, nextGate:0,
+  // 小队
+  minions:[],
+  // 货币
+  curr:{creds:0,kcred:0,radianite:0,vp:0},
+  // 装备库
+  inventory:[],
+  // 装备加成累计
+  itemDps:0, itemSpeed:0, itemCrit:0, autoEquipped:0, veteranBonus:0,
+  // 专精
+  passivePts:0, passives:{},
+  // 进度
+  act:1, areaIdx:0,
+  // 时间
+  lastT:0, dt:0,
+  // UI
+  state:'ready', paused:false, gameOver:false, victory:false, endless:false, endlessLayer:0,
+  // 强化三选一队列
+  pendingUpgrades:[],
+  // 开火计时
+  atkTimer:0,
+  // Buff
+  buffs:{},
+  // 统计
+  losses:0,
+  upgradeCount:0,
+};
+
+// ─── CANVAS ─────────────────────────────────────────────────
+const canvas=document.getElementById('bf');
+const ctx=canvas.getContext('2d');
+
+// ─── 渲染 ───────────────────────────────────────────────────
+function render(){
+  ctx.clearRect(0,0,CW,CH);
+  const area=AREAS[G.areaIdx]||AREAS[0];
+  const g=ctx.createLinearGradient(0,0,0,CH);
+  g.addColorStop(0,area.bg);g.addColorStop(0.5,'#0b141d');g.addColorStop(1,'#070d13');
+  ctx.fillStyle=g;ctx.fillRect(0,0,CW,CH);
+
+  // 透视车道线：让左右分路的走位在 2D 下依然可读
+  ctx.strokeStyle='rgba(38,51,63,.85)';ctx.lineWidth=1;
+  for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(CW/2,8);ctx.lineTo(i*CW/4,LINE_Y);ctx.stroke();}
+
+  // 据点防线：越线的敌人会破坏防线耐久
+  ctx.strokeStyle='rgba(255,70,85,0.6)';ctx.lineWidth=2;ctx.setLineDash([5,5]);
+  ctx.beginPath();ctx.moveTo(0,LINE_Y);ctx.lineTo(CW,LINE_Y);ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 空投补给：抵达时所在半场决定拿到哪张卡
+  if(G.gate){
+    const gy=LINE_Y-(G.gate.time/G.gate.total)*(LINE_Y-30);
+    ctx.fillStyle='rgba(18,28,38,.9)';ctx.fillRect(10,gy-18,CW/2-18,34);ctx.fillRect(CW/2+8,gy-18,CW/2-18,34);
+    ctx.strokeStyle='#ff4655';ctx.strokeRect(10,gy-18,CW/2-18,34);ctx.strokeRect(CW/2+8,gy-18,CW/2-18,34);
+    ctx.fillStyle='#ece8e1';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('◀ '+G.gate.left.label,CW/4,gy+3);ctx.fillText(G.gate.right.label+' ▶',CW*3/4,gy+3);
+  }
+
+  if(G.state==='ready'){
+    ctx.fillStyle='rgba(3,8,13,.66)';ctx.fillRect(0,0,CW,CH);
+    ctx.textAlign='center';
+    ctx.fillStyle='#ece8e1';ctx.font='bold 18px sans-serif';
+    ctx.fillText('亚海悬城 · 作战准备',CW/2,CH/2-26);
+    ctx.font='12px sans-serif';
+    if(G.weapon){
+      ctx.fillStyle='#ffd166';
+      ctx.fillText('主武器：'+G.weapon.name+' · '+G.weapon.role,CW/2,CH/2+2);
+      ctx.fillStyle='#c6cdd4';
+      ctx.fillText('按 Space 或点击「部署小队」开始行动',CW/2,CH/2+26);
+    }else{
+      ctx.fillStyle='#ff4655';
+      ctx.fillText('请先选择主武器（狂徒 / 奥丁 / 判官）',CW/2,CH/2+2);
+      ctx.fillStyle='#7d8a95';
+      ctx.fillText('点击「主武器」或按 1 / 2 / 3 选择',CW/2,CH/2+26);
+    }
+  }
+
+  // 掉落物
+  G.loot.forEach(function(l){
+    ctx.globalAlpha=0.6+0.4*Math.sin(Date.now()/300+l.x);
+    ctx.fillStyle=l.color||'#c0c0c0';
+    ctx.fillRect(l.x-4,l.y-4,8,8);
+    ctx.globalAlpha=1;
+  });
+
+  // 敌方单位
+  const t=Date.now()/1000;
+  G.monsters.forEach(function(m){
+    const bob=Math.sin(t*3+m.x*0.1)*2;
+    ctx.fillStyle='rgba(0,0,0,0.3)';
+    ctx.beginPath();ctx.ellipse(m.x,m.y+m.size+2,m.size*0.7,3,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=m.color;
+    ctx.beginPath();ctx.arc(m.x,m.y+bob,m.size,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=m.boss?'#ff4655':'#ff9a9a';
+    ctx.beginPath();ctx.arc(m.x-m.size*0.3,m.y+bob-m.size*0.2,2,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(m.x+m.size*0.3,m.y+bob-m.size*0.2,2,0,Math.PI*2);ctx.fill();
+    if(m.frozen>0){ctx.strokeStyle='rgba(63,208,212,0.7)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(m.x,m.y+bob,m.size+3,0,Math.PI*2);ctx.stroke();}
+    if(m.burn>0){ctx.strokeStyle='rgba(255,106,42,'+(0.45+0.3*Math.sin(t*8))+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(m.x,m.y+bob,m.size+5,0,Math.PI*2);ctx.stroke();}
+    if(m.boss){ctx.strokeStyle='rgba(255,70,85,'+(0.4+0.3*Math.sin(t*5))+')';ctx.lineWidth=3;ctx.beginPath();ctx.arc(m.x,m.y+bob,m.size+6,0,Math.PI*2);ctx.stroke();}
+    if(m.hp<m.maxHp){const bw=m.size*2;ctx.fillStyle='#26333f';ctx.fillRect(m.x-bw/2,m.y-m.size-8+bob,bw,3);ctx.fillStyle=m.boss?'#ff4655':'#e0413f';ctx.fillRect(m.x-bw/2,m.y-m.size-8+bob,bw*Math.max(0,m.hp/m.maxHp),3);}
+  });
+
+  // 小队
+  G.minions.forEach(function(m){
+    const bob=Math.sin(t*2+m.x*0.15)*1.5;
+    ctx.fillStyle='rgba(0,0,0,0.3)';ctx.beginPath();ctx.ellipse(m.x,m.y+10,8,3,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=m.color;ctx.beginPath();ctx.arc(m.x,m.y+bob,8,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#0f1923';ctx.font='8px sans-serif';ctx.textAlign='center';ctx.fillText(m.icon,m.x,m.y+3+bob);
+  });
+
+  // 玩家
+  const px=G.playerX, py=PLAYER_Y;
+  const bob=Math.sin(t*2)*2;
+  const w=G.weapon;
+  ctx.fillStyle=w?w.color:'#ece8e1';
+  ctx.beginPath();ctx.arc(px,py+bob,12,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle=(w?w.color:'#ff4655');
+  ctx.globalAlpha=0.3+0.2*Math.sin(t*3);
+  ctx.lineWidth=2;ctx.beginPath();ctx.arc(px,py+bob,16,0,Math.PI*2);ctx.stroke();
+  ctx.globalAlpha=1;
+  ctx.fillStyle='#0f1923';ctx.font='12px sans-serif';ctx.textAlign='center';
+  ctx.fillText(w?w.icon:'❓',px,py+5+bob);
+
+  // 弹丸
+  G.projectiles.forEach(function(p){
+    ctx.globalAlpha=0.35;ctx.strokeStyle=p.color;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx*2.2,p.y-p.vy*2.2);ctx.stroke();
+    ctx.globalAlpha=0.95;ctx.fillStyle=p.color;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.size||3,0,Math.PI*2);ctx.fill();
+    ctx.globalAlpha=1;
+  });
+
+  // 特效
+  G.efts.forEach(function(e){
+    ctx.globalAlpha=Math.max(0,Math.min(1,e.alpha));
+    if(e.type==='circle'){ctx.strokeStyle=e.color;ctx.lineWidth=e.lw||2;ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,Math.PI*2);ctx.stroke();}
+    else if(e.type==='text'){ctx.fillStyle=e.color;ctx.font=(e.size||14)+'px sans-serif';ctx.textAlign='center';ctx.fillText(e.text,e.x,e.y);}
+    else if(e.type==='line'){ctx.strokeStyle=e.color;ctx.lineWidth=e.lw||2;ctx.beginPath();ctx.moveTo(e.x1,e.y1);ctx.lineTo(e.x2,e.y2);ctx.stroke();}
+    ctx.globalAlpha=1;
+  });
+
+  // 伤害数字
+  G.dmgNums.forEach(function(d){
+    ctx.fillStyle=d.color||'#ffd166';ctx.font=(d.size||11)+'px sans-serif';ctx.textAlign='center';
+    ctx.globalAlpha=Math.max(0,Math.min(1,d.alpha));ctx.fillText(d.text,d.x,d.y);ctx.globalAlpha=1;
+  });
+}
+
+// ─── 刷怪 / 波次 / 首领 ─────────────────────────────────────
+function spawnMonster(forcedType,laneX,elite){
+  const area=AREAS[G.areaIdx]||AREAS[0];
+  const tk=forcedType||area.monsters[Math.floor(Math.random()*area.monsters.length)];
+  const base=MONSTERS[tk]||MONSTERS.drone;
+  // 血量成长快于伤害成长：长时间挂机只会越打越肉，而不会瞬间秒杀。
+  const hpSc=1+G.elapsed*0.014+(G.endless?G.endlessLayer*.28:0);
+  const dmgSc=1+G.elapsed*0.004+(G.endless?G.endlessLayer*.12:0);
+  G.monsters.push({
+    x:(laneX===null||laneX===undefined)?(35+Math.random()*(CW-70)):laneX,
+    y:-18-Math.random()*24,
+    hp:base.hp*hpSc*(elite?2.2:1), maxHp:base.hp*hpSc*(elite?2.2:1),
+    speed:(18+base.speed*13)*(elite?0.82:1), dmg:base.dmg*dmgSc*(elite?1.6:1),
+    color:elite?'#d88a3a':base.color, size:base.size*(elite?1.25:1), exp:base.exp*(elite?2:1),
+    type:tk, boss:false, frozen:0, burn:0,
+    ranged:tk==='sentinel'||tk==='brute', regen:tk==='brute', splash:tk==='crawler'||tk==='colossus',
+  });
+}
+
+function combatTimeScale(t){
+  if(t<=2.5)return t;
+  if(t<=9.5)return 2.5+(t-2.5)*12/7;
+  return t+5;
+}
+
+function launchWave(spec){
+  G.wave++;
+  const area=AREAS[G.areaIdx]||AREAS[0];
+  const count=Math.max(1,Math.round(spec.count*4*BATTLE_DENSITY));
+  const laneCenter=spec.lane===0?CW/2:(G.wave%2?CW*.28:CW*.72);
+  const spread=spec.lane===0?CW*.42:CW*.22;
+  for(let i=0;i<count;i++){
+    const type=area.monsters[(G.wave+i)%area.monsters.length];
+    const lane=Math.max(40,Math.min(CW-40,laneCenter+(Math.random()*2-1)*spread));
+    G.spawnQueue.push({delay:i*(spec.over/Math.max(1,count)),type:type,lane:lane,elite:false});
+  }
+  const specials=[['crawler',spec.banelings],['sentinel',spec.hydralisks],['brute',spec.roaches],['colossus',spec.aberrations]];
+  specials.forEach(function(pair){
+    const n=Math.round((pair[1]||0)*BATTLE_DENSITY);
+    for(let i=0;i<n;i++)G.spawnQueue.push({delay:i*.08,type:pair[0],lane:55+Math.random()*(CW-110),elite:pair[0]==='colossus'});
+  });
+  showNotification('⚠ 第 '+G.wave+' 波 · '+count+' 个敌方信号');
+}
+
+function spawnBoss(){
+  const area=AREAS[G.areaIdx]||AREAS[0];
+  const sc=1+G.level*0.12+(G.endless?G.endlessLayer*.35:0);
+  G.boss={
+    x:CW/2, y:-35,
+    hp:2800*sc, maxHp:2800*sc,
+    speed:12, dmg:20*sc,
+    color:'#ff4655', size:28, exp:50*sc,
+    boss:true, type:'boss', frozen:0, burn:0,
+  };
+  G.monsters.push(G.boss);
+  G.bossActive=true;
+  document.getElementById('boss-name').textContent='⚠ '+area.boss;
+  document.getElementById('boss-name').classList.add('show');
+}
+
+// ─── 武器面板数值（全部由武器基础值 + 强化等级推导） ────────
+function dmgMult(){ return 1+0.2*(G.up.dmg||0); }               // 伤害提升：每级 +20%
+function rateMult(){ return 1+0.2*(G.up.speed||0); }            // 攻速提升：每级 +20%
+function shotDamage(){
+  if(!G.weapon) return 0;
+  return G.weapon.dmg*dmgMult()*(1+PB('dps')*0.01)*(1+(G.buffs.dmg||0));
+}
+function fireInterval(){
+  if(!G.weapon) return 1;
+  const rate=rateMult()+(G.buffs.speed||0)*0.01+PB('speed')*0.01;
+  return Math.max(0.04,G.weapon.fireInterval/rate);
+}
+// 三把枪的弹丸 / 穿透 / 连锁 = 武器基础值 + 强化等级；下面带 At(l) 的版本用于卡牌预览
+function shotProjectilesAt(l){ return (G.weapon?G.weapon.projectiles:1)+(l||0); }
+function shotPierceAt(l){ return (G.weapon?G.weapon.pierce:0)+(l||0); }
+function shotChainAt(l){ return (G.weapon?G.weapon.chain:0)+(l||0); }
+function shotProjectiles(){ return shotProjectilesAt(G.up.multishot||0); }
+function shotPierce(){ return shotPierceAt(G.up.pierce||0); }
+function shotChain(){ return shotChainAt(G.up.chain||0); }
+function critChance(){ return Math.min(0.75,0.12*(G.up.headshot||0)+PB('crit')*0.01); }
+function burnDps(){ return (4+3*(G.up.incendiary||0))*dmgMult()*(1+PB('dps')*0.01); }
+function shockChance(){ return Math.min(0.5,0.2+0.05*(G.up.shock||0)); }
+function moveMult(){ return (G.buffs.moveSpeed||1)*(1+0.08*(G.up.stim||0)); }
+function cdMult(){ return (1-Math.min(60,PB('cd'))*0.01)*(1-Math.min(0.6,0.15*(G.up.ultcharge||0))); }
+function dpsEstimate(){
+  if(!G.weapon) return 0;
+  return Math.floor(shotDamage()*shotProjectiles()/fireInterval());
+}
+
+// ─── 开火（统一的弹丸射击系统） ─────────────────────────────
+function doSkillAttack(){
+  const w=G.weapon;
+  if(!w||G.monsters.length===0) return;
+  G.atkTimer=fireInterval();
+  const alive=G.monsters.filter(function(m){return !m._killed;});
+  if(alive.length===0) return;
+  const target=alive.slice().sort(function(a,b){
+    return Math.hypot(a.x-G.playerX,a.y-PLAYER_Y)-Math.hypot(b.x-G.playerX,b.y-PLAYER_Y);
+  })[0];
+  if(!target) return;
+
+  // 从枪口位置（而非身体中心）解算弹道，否则正上方/贴脸的敌人会被 14px 枪口偏移打空
+  const muzzleX=G.playerX+14, muzzleY=PLAYER_Y-2;
+  const baseAng=Math.atan2(target.y-muzzleY,target.x-muzzleX);
+  const n=shotProjectiles();
+  const dmg=shotDamage();
+  for(let i=0;i<n;i++){
+    let off;
+    if(n===1) off=(Math.random()-0.5)*w.spread*0.7;
+    else off=((i/(n-1))-0.5)*w.spread+(Math.random()-0.5)*0.03;
+    const a=baseAng+off;
+    G.projectiles.push({
+      x:muzzleX, y:muzzleY,
+      vx:Math.cos(a)*w.bulletSpeed, vy:Math.sin(a)*w.bulletSpeed,
+      dmg:dmg, color:w.bulletColor||w.color, size:w.bulletSize||3,
+      type:'bullet',
+      pierceLeft:shotPierce(), chainLeft:shotChain(), chainRange:72,
+      hitTargets:[], travelled:0, maxDist:w.range,
+      burn:(G.up.incendiary||0)>0, shock:(G.up.shock||0)>0,
+    });
+  }
+  // 枪口火光
+  G.efts.push({type:'line',x1:G.playerX,y1:PLAYER_Y,x2:G.playerX+Math.cos(baseAng)*18,y2:PLAYER_Y+Math.sin(baseAng)*18,color:w.color,alpha:.9,life:.09,lw:2});
+}
+
+function queueKill(m){
+  if(!m._killed){m._killed=true; m._killDmg=0;}
+}
+
+function processKills(){
+  const toKill=G.monsters.filter(function(m){return m._killed||m.hp<=0;});
+  toKill.forEach(function(m){
+    const idx=G.monsters.indexOf(m);
+    if(idx===-1) return;
+    G.monsters.splice(idx,1);
+    if(m._leaked){
+      // 首领漏过防线时也必须清掉 bossActive，否则本局再也不会刷新首领、任务无法推进（卡死）
+      if(m.boss){G.bossActive=false;G.boss=null;document.getElementById('boss-name').classList.remove('show');}
+      return;
+    }
+    G.killCount++;
+    G.exp+=m.exp;
+    G.killWindow.push(Date.now());
+    // 货币掉落
+    if(Math.random()<0.15){const r=Math.random();if(r<0.5)G.curr.kcred++;else if(r<0.8)G.curr.creds++;else if(r<0.95)G.curr.vp++;else G.curr.radianite++;}
+    // 装备掉落
+    if(Math.random()<0.05+PB('loot')*0.001){
+      const item=rollItem(G.level);
+      G.inventory.push(item);
+      G.loot.push({x:m.x,y:m.y,item:item,color:item.rarity==='unique'?'#ff4655':item.rarity==='rare'?'#ffd166':item.rarity==='magic'?'#2ea8c9':'#c0c0c0',life:8});
+      // 无人值守时背包不会爆仓：满 25 件后自动穿戴旧装备，保证成长曲线不断。
+      while(G.inventory.length>25){
+        const old=G.inventory.shift();
+        applyItemMods(old);
+        G.autoEquipped++;
+      }
+    }
+    // 首领死亡：和 Ashfall 一致，先记录击杀，直到 95 秒任务结算才判胜。
+    if(m.boss){
+      G.bossActive=false;G.boss=null;
+      G.bossDefeated=true;
+      document.getElementById('boss-name').classList.remove('show');
+      G.curr.creds+=3;G.curr.radianite++;
+      showNotification('🎉 首领击杀！守住阵线直到任务结束');
+    }
+    checkLevelUp();
+  });
+}
+
+// ─── 强化三选一 ─────────────────────────────────────────────
+// Ashfall 的升级牌按当前可用研究随机抽取，不保证固定出现某两张牌。
+function weightedPick(pool){
+  const total=pool.reduce(function(s,id){return s+UPGRADES[id].weight;},0);
+  let r=Math.random()*total;
+  for(let i=0;i<pool.length;i++){
+    r-=UPGRADES[pool[i]].weight;
+    if(r<=0) return pool[i];
+  }
+  return pool[pool.length-1];
+}
+function rollUpgradeChoices(){
+  const pool=Object.keys(UPGRADES),picks=[];
+  while(picks.length<3){
+    const available=pool.filter(function(id){return !picks.includes(id);});
+    // 核心研究拥有正常权重；特殊牌仍然稀有，但不再被锁在第三格。
+    const weighted=available.map(function(id){return {id:id,w:UPGRADES[id].kind==='core'?22:UPGRADES[id].weight};});
+    let r=Math.random()*weighted.reduce(function(s,x){return s+x.w;},0),chosen=weighted[0].id;
+    for(const x of weighted){r-=x.w;if(r<=0){chosen=x.id;break;}}
+    picks.push(chosen);
+  }
+  return picks;
+}
+function queueUpgradeDraft(){
+  G.pendingUpgrades=rollUpgradeChoices();
+  G.paused=true;
+}
+function applyUpgrade(id){
+  const u=UPGRADES[id];
+  if(!u) return null;
+  G.up[id]=(G.up[id]||0)+1;
+  const lv=G.up[id];
+  if(id==='fortify'){
+    G.defenseMax=Math.round(G.defenseMax*1.08);
+    G.defense=G.defenseMax;
+  }
+  G.upgradeCount++;
+  return {u:u,lv:lv};
+}
+function upgradeStat(id,lv){
+  const u=UPGRADES[id];
+  if(!u||!u.stat) return '';
+  return u.stat(lv);
+}
+
+function finishRun(won){
+  if(G.state!=='playing')return;
+  G.victory=!!won;G.gameOver=!won;G.paused=true;G.state=won?'victory':'defeat';
+  const btn=document.getElementById('btn-auto');
+  btn.disabled=false;btn.textContent=won?'♾ 继续无尽':'↻ 再次部署';
+  document.getElementById('btn-takeover').textContent='任务结束';
+  showNotification(won?'🏆 任务完成 · 首领已清除':'💀 任务失败 · '+(G.minions.length?'首领仍存活':'小队全灭'));
+}
+
+function continueEndless(){
+  if(G.state!=='victory')return false;
+  G.endless=true;G.endlessLayer=1;G.victory=false;G.gameOver=false;G.paused=false;G.state='playing';
+  G.timer=Infinity;G.nextGate=0;G.beaconTimer=10;G.gate=null;G.bossDefeated=false;
+  G.endlessNextWave=G.elapsed+8;G.endlessNextBoss=G.elapsed+35;
+  document.getElementById('btn-auto').disabled=true;
+  document.getElementById('btn-auto').textContent='无尽模式进行中';
+  document.getElementById('btn-takeover').textContent='Ⅱ 暂停';
+  showNotification('♾ 无尽模式 · 敌人会持续变强');
+  return true;
+}
+
+function checkLevelUp(){
+  while(G.exp>=G.expToNext){
+    G.exp-=G.expToNext;G.level++;
+    G.expToNext=XP_STEPS[G.level]||Math.round((XP_STEPS[XP_STEPS.length-1]||5000)*Math.pow(1.12,G.level-XP_STEPS.length+1));
+    G.passivePts++;G.maxHp+=10;G.hp=G.maxHp;G.maxMana+=5;G.mana=G.maxMana;
+    if(G.pendingUpgrades.length===0)queueUpgradeDraft();
+    showNotification('⚡ 等级 '+G.level+'！源能强化三选一');
+  }
+}
+
+function addDmgNum(x,y,text,color,size){
+  G.dmgNums.push({x:x+(Math.random()-0.5)*8,y:y,text:text,color:color||'#ffd166',size:size||11,alpha:1,vy:-1.5,life:0.8});
+}
+
+function showNotification(text){
+  const el=document.createElement('div');el.className='notif';el.textContent=text;
+  document.body.appendChild(el);setTimeout(function(){el.remove();},3000);
+}
+
+// ─── 战术技能 ───────────────────────────────────────────────
+function useTac(key){
+  const t=TACTICAL[key];
+  if(!t||G.tacCD[key]>0||G.mana<t.cost) return;
+  G.mana-=t.cost;
+  G.tacCD[key]=t.cd*cdMult();
+  switch(t.type){
+    case 'buff':
+      G.buffs.dmg=(G.buffs.dmg||0)+t.val;
+      G.buffs.speed=(G.buffs.speed||0)+15;
+      setTimeout(function(){G.buffs.dmg-=t.val;G.buffs.speed-=15;},5000);
+      showNotification('💉 兴奋剂！伤害+'+(t.val*100)+'%');
+      break;
+    case 'summon':
+      deployMinion('heavy');
+      showNotification('🔫 哨戒炮台已部署！');
+      break;
+    case 'speed':
+      G.buffs.moveSpeed=t.val;
+      setTimeout(function(){G.buffs.moveSpeed=1;},4000);
+      showNotification('⚡ 霓虹疾走！移速提升');
+      break;
+    case 'nuke':
+      const nukeDmg=t.val*(1+G.level*0.5);
+      G.monsters.forEach(function(m){
+        m.hp-=nukeDmg;
+        addDmgNum(m.x,m.y-m.size-5,Math.floor(nukeDmg),'#ff6a2a',16);
+        G.efts.push({type:'circle',x:m.x,y:m.y,r:0,maxR:40,color:'#ff6a2a',alpha:0.8,life:0.5,_grow:true});
+      });
+      showNotification('🛰️ 轨道打击！全屏毁灭打击');
+      break;
+  }
+}
+
+function deployMinion(type){
+  const t=SQUAD_TYPES[type]||SQUAD_TYPES.rookie;
+  const cap=24;
+  if(G.minions.length>=cap) return false;
+  const lvlScale=1+G.level*0.18+G.areaIdx*0.1;
+  const m={
+    type:type,
+    x:G.playerX+(Math.random()-.5)*50,
+    y:PLAYER_Y-18-Math.random()*35,
+    hp:t.hp*lvlScale, maxHp:t.hp*lvlScale,
+    dmg:t.dmg*(1+G.level*0.09)*(1+PB('dps')*0.01),
+    speed:t.speed, range:t.range, heavy:t.heavy,
+    color:t.color, icon:t.icon, atkT:0,
+  };
+  G.minions.push(m);
+  return true;
+}
+
+// ─── 空投补给卡 ─────────────────────────────────────────────
+const SUPPLY_CARDS=[
+  {label:'+4 新兵',apply:function(){for(let i=0;i<4;i++)deployMinion('rookie');}},
+  {label:'+3 步枪手',apply:function(){for(let i=0;i<3;i++)deployMinion('rifleman');}},
+  {label:'+2 狙击手',apply:function(){for(let i=0;i<2;i++)deployMinion('sniper');}},
+  {label:'+1 重装兵',apply:function(){deployMinion('heavy');}},
+  {label:'全队火力 +12%',apply:function(){G.itemDps+=12;}},
+  {label:'全队射速 +10%',apply:function(){G.itemSpeed+=10;}},
+];
+
+const SUPPLY_PLAN=[
+  [0,1],[3,0],[0,1],[1,3],[0,2],[3,0],[2,1],[0,3],[4,2],[5,0]
+];
+
+function openSupplyGate(index){
+  const pair=SUPPLY_PLAN[index%SUPPLY_PLAN.length]||[0,1];
+  G.gate={index:index,left:SUPPLY_CARDS[pair[0]],right:SUPPLY_CARDS[pair[1]],time:2.2,total:2.2};
+  showNotification('📦 补给抵达：移动到左侧或右侧选择');
+}
+
+function resolveSupplyGate(){
+  if(!G.gate)return;
+  const pick=G.playerX<CW/2?G.gate.left:G.gate.right;
+  pick.apply();
+  showNotification('✅ 增援已抵达 · '+pick.label);
+  G.gate=null;
+}
+
+// ─── 专精属性合计 ───────────────────────────────────────────
+function PB(stat){
+  let v=0;
+  for(const id in G.passives){
+    if(!G.passives[id]) continue;
+    const p=PASSIVES.find(function(x){return x.id===id;});
+    if(p&&p.stat===stat) v+=p.val;
+  }
+  // 树点满后剩余点数转化为老兵加成，长局不会浪费
+  if(stat==='dps'){
+    v+=(G.veteranBonus||0)*2;
+    v+=(G.itemDps||0)+(G.itemCrit||0);
+  }
+  if(stat==='speed') v+=(G.itemSpeed||0);
+  return v;
+}
+
+// ─── 装备生成 ───────────────────────────────────────────────
+const MODS=[
+  {stat:'hp',name:'+{} 生命',min:10,max:50,w:10},
+  {stat:'mana',name:'+{} 能量',min:5,max:30,w:8},
+  {stat:'dps',name:'+{}% 火力',min:5,max:25,w:8},
+  {stat:'armor',name:'+{} 护甲',min:5,max:30,w:6},
+  {stat:'evasion',name:'+{} 身法',min:5,max:20,w:5},
+  {stat:'crit',name:'+{}% 爆头',min:3,max:15,w:4},
+  {stat:'speed',name:'+{}% 射速',min:3,max:15,w:4},
+];
+const RW={normal:60,magic:25,rare:12,unique:3};
+const BASES={weapon:{name:'枪械配件',icon:'🔩'},armor:{name:'重型护甲',icon:'🛡️'},helmet:{name:'战术头盔',icon:'⛑️'},gloves:{name:'战术手套',icon:'🧤'},boots:{name:'疾行战靴',icon:'👢'},amulet:{name:'特工徽章',icon:'📿'},ring:{name:'源能核心',icon:'💎'}};
+
+function rollItem(lvl){
+  let r=Math.random()*100, cum=0, rarity='normal';
+  for(const kv of Object.entries(RW)){cum+=kv[1];if(r<cum){rarity=kv[0];break;}}
+  const bkeys=Object.keys(BASES);
+  const bk=bkeys[Math.floor(Math.random()*bkeys.length)];
+  const base=BASES[bk];
+  const item={type:bk,name:base.name,icon:base.icon,rarity:rarity,level:lvl,mods:[]};
+  const mc=rarity==='magic'?1+Math.floor(Math.random()*2):rarity==='rare'?3+Math.floor(Math.random()*3):rarity==='unique'?4+Math.floor(Math.random()*2):0;
+  const pool=MODS.slice();
+  for(let i=0;i<mc&&pool.length>0;i++){
+    const tw=pool.reduce(function(s,m){return s+m.w;},0);
+    let rr=Math.random()*tw,idx=0;
+    for(let j=0;j<pool.length;j++){rr-=pool[j].w;if(rr<=0){idx=j;break;}}
+    const mod=pool[idx];
+    const val=Math.floor(mod.min+Math.random()*(mod.max-mod.min));
+    item.mods.push({stat:mod.stat,name:mod.name.replace('{}',val),val:val});
+    pool.splice(idx,1);
+  }
+  return item;
+}
+
+// ─── 战斗主循环 ─────────────────────────────────────────────
+function battleUpdate(dt){
+  if(G.paused||G.gameOver||G.state!=='playing')return;
+
+  G.elapsed+=dt;
+  if(!G.endless)G.timer=Math.max(0,MISSION_TIME-G.elapsed);
+
+  // Ashfall：持续涓流和预设大波同时存在，压力随任务阶段上升。
+  const phaseTime=G.endless?(75+G.endlessLayer*10):G.elapsed;
+  const trickleRate=phaseTime<12?3:phaseTime<30?5:phaseTime<60?9:phaseTime<75?13:9;
+  G.spawnDebt+=dt*trickleRate*0.22;
+  while(G.spawnDebt>=1){
+    const area=AREAS[G.areaIdx]||AREAS[0];
+    spawnMonster(area.monsters[Math.floor(Math.random()*area.monsters.length)],55+Math.random()*(CW-110),false);
+    G.spawnDebt--;
+  }
+  while(!G.endless&&G.nextWave<WAVE_SCHEDULE.length&&G.elapsed>=combatTimeScale(WAVE_SCHEDULE[G.nextWave].at)){
+    launchWave(WAVE_SCHEDULE[G.nextWave++]);
+  }
+  if(G.endless&&G.elapsed>=G.endlessNextWave){
+    G.endlessLayer++;
+    launchWave({count:120+G.endlessLayer*45,over:2.2,hydralisks:4+G.endlessLayer,roaches:4+G.endlessLayer});
+    G.endlessNextWave=G.elapsed+10;
+  }
+  for(const q of G.spawnQueue)q.delay-=dt;
+  const due=G.spawnQueue.filter(function(q){return q.delay<=0;});
+  G.spawnQueue=G.spawnQueue.filter(function(q){return q.delay>0;});
+  for(const q of due)spawnMonster(q.type,q.lane,q.elite);
+  if(!G.endless&&G.elapsed>=BOSS_AT&&!G.bossActive&&!G.bossDefeated)spawnBoss();
+  if(G.endless&&G.elapsed>=G.endlessNextBoss&&!G.bossActive){spawnBoss();G.endlessNextBoss=G.elapsed+45;}
+
+  // 补给按目标站的 10 个固定时间点抵达；箱体经过阵线时按左右位置结算。
+  if(G.gate){G.gate.time-=dt;if(G.gate.time<=0)resolveSupplyGate();}
+  else if(!G.endless&&G.nextGate<SUPPLY_TIMES.length&&G.elapsed>=SUPPLY_TIMES[G.nextGate]){
+    openSupplyGate(G.nextGate++);
+  }else if(G.endless){
+    G.beaconTimer-=dt;
+    if(G.beaconTimer<=0){openSupplyGate(5+G.nextGate++);G.beaconTimer=12;}
+  }
+  if(!G.endless&&G.nextGate<SUPPLY_TIMES.length)G.beaconTimer=Math.max(0,SUPPLY_TIMES[G.nextGate]-G.elapsed);
+
+  // A/D 与拖动设定阵型目标点，全员跟随同一条路线
+  const moveSpd=175*moveMult();
+  if(G.moveDir)G.targetX+=G.moveDir*moveSpd*dt;
+  G.targetX=Math.max(48,Math.min(CW-48,G.targetX));
+  G.playerX+=(G.targetX-G.playerX)*Math.min(1,dt*12);
+
+  // 没有额外的“玩家枪”：和目标站一样，所有伤害都来自编队中的实际队员。
+
+  // 敌方推进：只有被前排队员挡住时才停下
+  const leaked=[];
+  for(const m of G.monsters){
+    if(m._killed)continue;
+    if(m.burn>0){
+      m.burn=Math.max(0,m.burn-dt);
+      m.hp-=burnDps()*dt;
+      if(Math.random()<0.05)addDmgNum(m.x,m.y-m.size-4,Math.floor(burnDps()),'#ff6a2a',9);
+      if(m.hp<=0){queueKill(m);continue;}
+    }
+    if(m.frozen>0)m.frozen=Math.max(0,m.frozen-dt);
+    if(m.regen&&m.hp<m.maxHp&&(G.elapsed-(m.lastHitAt||0))>1.5)m.hp=Math.min(m.maxHp,m.hp+m.maxHp*.03*dt);
+    const contact=G.minions.reduce(function(best,u){
+      if(u.hp<=0)return best;
+      const d=Math.hypot(u.x-m.x,u.y-m.y);
+      return d<(m.size+11)&&(best===null||d<best.d)?{u:u,d:d}:best;
+    },null);
+    let blocker=contact;
+    if(m.ranged){
+      blocker=G.minions.reduce(function(best,u){
+        if(u.hp<=0)return best;const d=Math.hypot(u.x-m.x,u.y-m.y);
+        return d<105&&(best===null||d<best.d)?{u:u,d:d}:best;
+      },null)||contact;
+    }
+    m.blocker=blocker?blocker.u:null;
+    if(!m.frozen&&!m.blocker)m.y+=m.speed*dt;
+    m.atkT=(m.atkT||0)-dt;
+    if(m.blocker&&m.atkT<=0){
+      const victims=m.splash?G.minions.filter(function(u){return u.hp>0&&Math.hypot(u.x-m.x,u.y-m.y)<34;}).slice(0,m.type==='colossus'?3:5):[m.blocker];
+      victims.forEach(function(u){
+        const wasAlive=u.hp>0;u.hp-=m.dmg*(m.ranged?.32:.42);
+        if(wasAlive&&u.hp<=0){G.losses++;addDmgNum(u.x,u.y-12,'✝','#ff4655',12);}
+      });
+      m.atkT=m.ranged?1.35:1.05;
+      if(m.type==='crawler'){m._killed=true;m._leaked=true;}
+    }
+    if(m.y>=LINE_Y){m._leaked=true;m._killed=true;leaked.push(m);}
+  }
+  for(const m of leaked){G.defense=Math.max(0,G.defense-m.dmg);addDmgNum(m.x,LINE_Y-5,'突破 -'+Math.ceil(m.dmg),'#ff4655',10);}
+  if(G.defense<=0){gameOver();return;}
+
+  // 弹丸：穿透优先，穿透用尽后转为连锁，都没有则命中即消散
+  const pHits=[];
+  for(const p of G.projectiles){
+    p.x+=p.vx*dt*60;p.y+=p.vy*dt*60;
+    if(p.type==='bullet'){
+      p.travelled=(p.travelled||0)+Math.hypot(p.vx,p.vy)*dt*60;
+      if(p.maxDist&&p.travelled>p.maxDist){p.dead=true;continue;}
+    }
+    for(const m of G.monsters){
+      if(p.dead||m._killed)continue;
+      if(Math.hypot(p.x-m.x,p.y-m.y)>=m.size+(p.size||3))continue;
+      if(p.hitTargets.includes(m))continue;
+      pHits.push({m:m,dmg:p.dmg,color:p.color,burn:p.burn,shock:p.shock});
+      p.hitTargets.push(m);
+      if(p.pierceLeft>0){p.pierceLeft--;continue;}          // 穿透：继续直飞
+      if(p.chainLeft>0){                                    // 连锁：弹射到最近的未命中敌人
+        const next=G.monsters.filter(function(x){
+          return !x._killed&&!p.hitTargets.includes(x)&&Math.hypot(x.x-m.x,x.y-m.y)<=p.chainRange;
+        }).sort(function(a,b){return Math.hypot(a.x-m.x,a.y-m.y)-Math.hypot(b.x-m.x,b.y-m.y);})[0];
+        if(next){
+          p.chainLeft--;
+          const dx=next.x-m.x,dy=next.y-m.y,d=Math.hypot(dx,dy)||1;
+          p.vx=dx/d*7;p.vy=dy/d*7;p.maxDist=0;
+          G.efts.push({type:'line',x1:m.x,y1:m.y,x2:next.x,y2:next.y,color:p.color,alpha:.6,life:.2});
+          continue;
+        }
+      }
+      p.dead=true;
+    }
+  }
+  const cc=critChance();
+  for(const h of pHits){
+    let dmg=h.dmg,crit=false;
+    if(cc>0&&Math.random()<cc){dmg*=CRIT_MULT;crit=true;}
+    h.m.hp-=dmg;
+    addDmgNum(h.m.x,h.m.y-h.m.size-4,(crit?'✸':'')+Math.floor(dmg),crit?'#ff4655':h.color,crit?14:10);
+    if(crit)G.efts.push({type:'circle',x:h.m.x,y:h.m.y,r:0,maxR:12,color:'#ff4655',alpha:.5,life:.16,_grow:true});
+    if(h.burn)h.m.burn=Math.max(h.m.burn||0,BURN_TIME);
+    if(h.shock&&Math.random()<shockChance())h.m.frozen=Math.max(h.m.frozen||0,1.5);
+    if(h.m.hp<=0)queueKill(h.m);
+  }
+  G.projectiles=G.projectiles.filter(function(p){return !p.dead&&p.x>-30&&p.x<CW+30&&p.y>-40&&p.y<CH+30;});
+
+  // 小队维持阵型并各自索敌开火
+  const cols=6, fireRate=1/(1+PB('speed')*.01+(G.buffs.speed||0)*.01);
+  G.minions.forEach(function(u,i){
+    const row=Math.floor(i/cols),col=i%cols,used=Math.min(cols,G.minions.length-row*cols);
+    const tx=G.playerX+(col-(used-1)/2)*22,ty=PLAYER_Y-24-row*20;
+    const d=Math.hypot(tx-u.x,ty-u.y),step=Math.min(d,115*dt);
+    if(d>1){u.x+=(tx-u.x)/d*step;u.y+=(ty-u.y)/d*step;}
+    u.atkT-=dt;
+    const target=G.monsters.filter(function(m){return !m._killed;}).sort(function(a,b){
+      return Math.hypot(a.x-u.x,a.y-u.y)-Math.hypot(b.x-u.x,b.y-u.y);
+    })[0];
+    if(target&&u.atkT<=0&&Math.hypot(target.x-u.x,target.y-u.y)<=u.range+70){
+      target.hp-=u.dmg;u.atkT=.72*fireRate;
+      G.efts.push({type:'line',x1:u.x,y1:u.y,x2:target.x,y2:target.y,color:u.color,alpha:.55,life:.12,lw:1});
+      if(target.hp<=0)queueKill(target);
+    }
+  });
+  G.minions=G.minions.filter(function(u){return u.hp>0;});
+  processKills();
+
+  // 特效 / 资源 / HUD 记账
+  G.efts.forEach(function(e){
+    if(e._maxLife===undefined)e._maxLife=e.life;
+    e.life-=dt;e.alpha=Math.max(0,e.life/e._maxLife);
+    if(e._grow)e.r=e.maxR*(1-e.life/e._maxLife);
+  });
+  G.efts=G.efts.filter(function(e){return e.life>0;});
+  G.dmgNums.forEach(function(d){d.y+=d.vy;d.life-=dt;d.alpha=Math.max(0,d.life/.8);});
+  G.dmgNums=G.dmgNums.filter(function(d){return d.life>0;});
+  G.loot.forEach(function(l){l.life-=dt;});
+  G.loot=G.loot.filter(function(l){return l.life>0;});
+  Object.keys(G.tacCD).forEach(function(k){G.tacCD[k]=Math.max(0,G.tacCD[k]-dt);});
+  G.mana=Math.min(G.maxMana,G.mana+dt*2);
+  G.hp=Math.min(G.maxHp,G.hp+dt*(1.5+PB('regen')+2*(G.up.stim||0)));
+  const now=Date.now();G.killWindow=G.killWindow.filter(function(t){return now-t<3000;});
+  if(G.bossActive&&G.boss)document.getElementById('boss-hp-fill').style.width=Math.max(0,G.boss.hp/G.boss.maxHp*100)+'%';
+  else document.getElementById('boss-hp-fill').style.width='100%';
+}
+
+function gameOver(){
+  G.gameOver=true;
+  showNotification('💀 据点防线被突破！');
+  setTimeout(function(){if(confirm('据点防线被突破！是否重新开始？'))location.reload();},1000);
+}
+
+// ─── UI 刷新 ────────────────────────────────────────────────
+function updateUI(){
+  document.getElementById('level-val').textContent=G.level;
+  document.getElementById('exp-fill').style.width=(G.exp/G.expToNext*100)+'%';
+  document.getElementById('kill-count').textContent=G.killCount;
+  const total=Math.max(0,Math.ceil(G.timer));
+  document.getElementById('timer').textContent=String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0');
+  const dp=G.defenseMax>0?Math.max(0,G.defense/G.defenseMax*100):0;
+  document.getElementById('def-fill').style.width=dp+'%';
+  document.getElementById('def-fill').style.setProperty('--dp',(100-dp)+'%');
+  document.getElementById('def-val').textContent=Math.floor(dp)+'%';
+
+  // 主武器面板
+  const w=G.weapon;
+  const wp=document.getElementById('wpn-info');
+  const tierEl=document.getElementById('wpn-tier');
+  if(w){
+    tierEl.textContent=TIER_CN[w.tier]||w.tier;
+    tierEl.className='wpn-tier '+w.tier;
+    wp.innerHTML=
+      '<div class="wpn-icon">'+w.icon+'</div>'+
+      '<div class="wpn-details">'+
+        '<div class="wpn-name">'+w.name+'<span class="en">'+w.en+'</span></div>'+
+        '<div class="wpn-desc">'+w.desc+'</div>'+
+        '<div class="wpn-stats">'+
+          '<span class="wpn-stat">⚔ 单发 <span class="val">'+Math.floor(shotDamage())+'</span></span>'+
+          '<span class="wpn-stat">🎯 弹丸 <span class="val">'+shotProjectiles()+'</span></span>'+
+          '<span class="wpn-stat">⏱ 射速 <span class="val">'+(1/fireInterval()).toFixed(1)+'/s</span></span>'+
+          '<span class="wpn-stat">🔩 穿透 <span class="val">'+shotPierce()+'</span></span>'+
+          '<span class="wpn-stat">🔗 连锁 <span class="val">'+shotChain()+'</span></span>'+
+          '<span class="wpn-stat">📊 DPS <span class="val">'+dpsEstimate()+'</span></span>'+
+          (critChance()>0?'<span class="wpn-stat">💀 暴击 <span class="val">'+Math.round(critChance()*100)+'%</span></span>':'')+
+        '</div>'+
+      '</div>';
+  }else{
+    tierEl.textContent='未选择';
+    tierEl.className='wpn-tier normal';
+    wp.innerHTML='<div class="wpn-icon">❓</div><div class="wpn-details">'+
+      '<div class="wpn-name">未装备主武器</div>'+
+      '<div class="wpn-desc">出生三选一：狂徒 / 奥丁 / 判官（点击「主武器」或按 1 / 2 / 3）</div></div>';
+  }
+  // 已获得强化
+  const chipEl=document.getElementById('up-chips');
+  const owned=Object.keys(UPGRADES).filter(function(id){return (G.up[id]||0)>0;});
+  if(owned.length===0){
+    chipEl.innerHTML='<span class="up-empty">升级后三选一强化：伤害提升 / 攻速提升 必定出现</span>';
+  }else{
+    chipEl.innerHTML=owned.map(function(id){
+      const u=UPGRADES[id];
+      return '<span class="up-chip '+u.kind+'" style="border-color:'+u.color+'"><span style="color:'+u.color+'">'+u.icon+'</span> '+
+        u.name+' <b>Lv.'+G.up[id]+'</b></span>';
+    }).join('');
+  }
+
+  // 战术技能
+  const sb=document.getElementById('skill-bar');
+  sb.innerHTML=['q','w','e','r'].map(function(k){
+    const t=TACTICAL[k];const cd=G.tacCD[k];const onCd=cd>0;
+    return '<div class="skill-card'+(onCd?' on-cd':'')+'" data-skill="'+k+'">'+
+      '<span class="key">'+k.toUpperCase()+'</span>'+
+      '<div class="icon">'+t.icon+'</div>'+
+      '<div class="name">'+t.name+'</div>'+
+      '<div class="cd-overlay">'+(cd>0?cd.toFixed(1)+'s':t.cost+'MP')+'</div>'+
+    '</div>';
+  }).join('');
+
+  // 状态
+  document.getElementById('status-panel').innerHTML=
+    '<div class="stat-row"><span class="stat-label">❤ 生命</span><span class="stat-val hp">'+Math.floor(G.hp)+'/'+G.maxHp+'</span></div>'+
+    '<div class="stat-row"><span class="stat-label">💧 能量</span><span class="stat-val mp">'+Math.floor(G.mana)+'/'+G.maxMana+'</span></div>'+
+    '<div class="stat-row"><span class="stat-label">⚔ 单发伤害</span><span class="stat-val">'+Math.floor(shotDamage())+'</span></div>'+
+    '<div class="stat-row"><span class="stat-label">📊 每秒输出</span><span class="stat-val">'+dpsEstimate()+'</span></div>'+
+    '<div class="stat-row"><span class="stat-label">🛡 护甲</span><span class="stat-val">'+(G.armor+PB('armor'))+'</span></div>'+
+    '<div class="stat-row"><span class="stat-label">💨 身法</span><span class="stat-val">'+(G.evasion+PB('evasion'))+'</span></div>'+
+    '<div class="stat-row"><span class="stat-label">💀 暴击率</span><span class="stat-val">'+Math.round(critChance()*100)+'%</span></div>'+
+    '<div class="stat-row"><span class="stat-label">☠ 歼敌/3s</span><span class="stat-val">'+G.killWindow.length+'</span></div>';
+
+  // 小队面板
+  const counts={};
+  G.minions.forEach(function(u){counts[u.type]=(counts[u.type]||0)+1;});
+  let inf=0,heavy=0;
+  G.minions.forEach(function(u){if(u.heavy)heavy++;else inf++;});
+  document.getElementById('sq-inf').textContent=inf;
+  document.getElementById('sq-heavy').textContent=heavy;
+  document.getElementById('sq-loss').textContent=G.losses;
+  const sig=Object.keys(SQUAD_TYPES).map(function(k){return k+':'+(counts[k]||0);}).join('|');
+  const grid=document.getElementById('squad-grid');
+  if(grid.dataset.sig!==sig){
+    grid.dataset.sig=sig;
+    grid.innerHTML=Object.keys(SQUAD_TYPES).map(function(k){
+      const t=SQUAD_TYPES[k];const n=counts[k]||0;
+      return '<div class="squad-card'+(n?'':' empty')+'">'+
+        '<div class="s-icon">'+t.icon+'</div>'+
+        '<div class="s-name">'+t.name+'</div>'+
+        '<div class="s-count">'+n+'</div>'+
+      '</div>';
+    }).join('');
+  }
+  const supplyLeft=G.gate?G.gate.time:G.beaconTimer;
+  const supplyTotal=G.gate?G.gate.total:G.beaconInterval;
+  const bPct=100-Math.max(0,Math.min(100,(supplyLeft/supplyTotal)*100));
+  document.getElementById('beacon-fill').style.width=bPct+'%';
+  document.getElementById('beacon-txt').textContent=G.gate?'选择中':Math.max(0,G.beaconTimer).toFixed(1)+'s';
+  document.getElementById('kill-rate').textContent=G.killWindow.length;
+  document.getElementById('brief-title').textContent=G.state==='ready'?'00 / 作战准备':String(Math.max(1,G.wave)).padStart(2,'0')+' / '+(G.bossActive?'首领来袭':'第 '+Math.max(1,G.wave)+' 波');
+
+  // 货币
+  document.getElementById('curr-bar').innerHTML=
+    '<div class="curr-item"><span class="curr-icon">🪙</span>信用点 <span class="curr-count">'+G.curr.creds+'</span></div>'+
+    '<div class="curr-item"><span class="curr-icon">💠</span>王国币 <span class="curr-count">'+G.curr.kcred+'</span></div>'+
+    '<div class="curr-item"><span class="curr-icon">⭐</span>源能点 <span class="curr-count">'+G.curr.radianite+'</span></div>'+
+    '<div class="curr-item"><span class="curr-icon">🔶</span>无畏币 <span class="curr-count">'+G.curr.vp+'</span></div>';
+}
+
+// ─── 弹窗基础 ───────────────────────────────────────────────
+function showModal(id){document.getElementById(id).classList.add('show');}
+function hideModal(id){document.getElementById(id).classList.remove('show');}
+
+// ─── 出生选择主武器 ─────────────────────────────────────────
+function openWeaponSelect(){
+  const list=document.getElementById('weapon-list');
+  list.innerHTML='';
+  Object.keys(WEAPONS).forEach(function(id,idx){
+    const w=WEAPONS[id];
+    const card=document.createElement('div');
+    card.className='weapon-card';
+    card.dataset.weapon=id;
+    card.innerHTML=
+      '<div class="wc-icon">'+w.icon+'</div>'+
+      '<div class="wc-body">'+
+        '<div class="wc-name">'+w.name+'<span class="wc-en">'+w.en+'</span></div>'+
+        '<div class="wc-role">'+w.role+' · '+(TIER_CN[w.tier]||w.tier)+'</div>'+
+        '<div class="wc-desc">'+w.desc+'</div>'+
+        '<div class="wc-stats">'+
+          '<span>⚔ 单发 '+w.dmg+'</span>'+
+          '<span>⏱ 射速 '+(1/w.fireInterval).toFixed(1)+'/s</span>'+
+          '<span>🎯 弹丸 '+w.projectiles+'</span>'+
+          '<span>🔩 穿透 '+w.pierce+'</span>'+
+          '<span>📊 DPS '+Math.floor(w.dmg*w.projectiles/w.fireInterval)+'</span>'+
+        '</div>'+
+        '<div class="wc-tag">'+w.tag+'</div>'+
+      '</div>'+
+      '<div class="uc-key">'+(idx+1)+'</div>';
+    card.addEventListener('click',function(){chooseWeapon(id);});
+    list.appendChild(card);
+  });
+  showModal('modal-weapon');
+}
+function chooseWeapon(id){
+  const w=WEAPONS[id];
+  if(!w) return;
+  G.weapon=w;
+  hideModal('modal-weapon');
+  G.atkTimer=0;
+  showNotification('🔫 已装备 '+w.name+' · '+w.role);
+  updateUI();
+}
+
+// ─── 升级强化三选一 ─────────────────────────────────────────
+function showUpgradeModal(){
+  if(!G.pendingUpgrades.length){hideModal('modal-drop');return;}
+  const list=document.getElementById('drop-list');
+  list.innerHTML='';
+  G.pendingUpgrades.forEach(function(id,idx){
+    const u=UPGRADES[id];
+    const lv=G.up[id]||0;
+    const card=document.createElement('div');
+    card.className='upgrade-card'+(u.kind==='special'?' special':'');
+    card.dataset.upgrade=id;
+    card.style.borderLeftColor=u.color;
+    card.innerHTML=
+      '<div class="uc-icon">'+u.icon+'</div>'+
+      '<div class="uc-body">'+
+        '<div class="uc-name" style="color:'+u.color+'">'+u.name+
+          '<span class="uc-kind '+u.kind+'">'+(u.kind==='special'?'特殊':(u.kind==='core'?'核心':'常规'))+'</span>'+
+          '<span class="uc-lv">Lv.'+lv+' → Lv.'+(lv+1)+'</span>'+
+        '</div>'+
+        '<div class="uc-desc">'+u.desc+'</div>'+
+        '<div class="uc-next">'+upgradeStat(id,lv)+'  →  '+upgradeStat(id,lv+1)+'</div>'+
+      '</div>'+
+      '<div class="uc-key">'+(idx+1)+'</div>';
+    card.addEventListener('click',function(){pickUpgrade(idx);});
+    list.appendChild(card);
+  });
+  // 把「特殊强化是低概率」写清楚：第三张牌抽到特殊强化的概率
+  document.getElementById('drop-hint').textContent=
+    '伤害提升 与 攻速提升 必定出现 ｜ 特殊强化出现概率 '+
+    Math.round(SPECIAL_WEIGHT/THIRD_WEIGHT*100)+'%';
+  showModal('modal-drop');
+  G.paused=true;
+}
+
+function pickUpgrade(idx){
+  const id=G.pendingUpgrades[idx];
+  if(!id) return false;
+  const res=applyUpgrade(id);
+  G.pendingUpgrades=[];
+  hideModal('modal-drop');
+  if(!G.gameOver&&G.state==='playing')G.paused=false;
+  const u=UPGRADES[id];
+  showNotification('🔼 '+u.name+' Lv.'+res.lv+(u.kind==='special'?' · 特殊强化！':''));
+  updateUI();
+  return true;
+}
+
+// ─── 装备库 ─────────────────────────────────────────────────
+function initInventory(){
+  const grid=document.getElementById('inv-grid');
+  grid.innerHTML='';
+  for(let i=0;i<25;i++){
+    const item=G.inventory[i];
+    const slot=document.createElement('div');
+    slot.className='inv-slot'+(item?' has-item '+item.rarity:'');
+    if(item){
+      slot.innerHTML=item.icon+(item.level?'<span class="lvl">'+item.level+'</span>':'');
+      slot.addEventListener('mouseenter',function(e){showTip(e,item);});
+      slot.addEventListener('mouseleave',hideTip);
+      slot.addEventListener('click',function(){equipItem(i);initInventory();});
+    }
+    grid.appendChild(slot);
+  }
+  document.getElementById('inv-chaos').textContent=G.curr.creds;
+  document.getElementById('inv-alt').textContent=G.curr.kcred;
+  document.getElementById('inv-exalt').textContent=G.curr.radianite;
+}
+
+function showTip(e,item){
+  const tip=document.getElementById('tooltip');
+  const rc={normal:'#c0c0c0',magic:'#2ea8c9',rare:'#ffd166',unique:'#ff4655'};
+  tip.querySelector('.name').textContent=item.name;
+  tip.querySelector('.name').style.color=rc[item.rarity];
+  tip.querySelector('.type').textContent=item.rarity.toUpperCase()+' Lv.'+item.level;
+  tip.querySelector('.mods').innerHTML=item.mods.map(function(m){return '<div class="mod plus">'+m.name+'</div>';}).join('');
+  tip.classList.add('show');
+  tip.style.left=Math.min(e.clientX+10,window.innerWidth-220)+'px';
+  tip.style.top=(e.clientY+10)+'px';
+}
+function hideTip(){document.getElementById('tooltip').classList.remove('show');}
+
+function applyItemMods(item){
+  item.mods.forEach(function(m){
+    switch(m.stat){
+      case'hp':G.maxHp+=m.val;G.hp+=m.val;break;
+      case'mana':G.maxMana+=m.val;G.mana+=m.val;break;
+      case'armor':G.armor+=m.val;break;
+      case'evasion':G.evasion+=m.val;break;
+      case'dps':G.itemDps+=m.val;break;
+      case'speed':G.itemSpeed+=m.val;break;
+      case'crit':G.itemCrit+=m.val;break;
+    }
+  });
+}
+
+function equipItem(idx){
+  const item=G.inventory[idx];
+  if(!item)return;
+  applyItemMods(item);
+  G.inventory.splice(idx,1);
+  showNotification('✅ 已装备 '+item.name);
+}
+
+function initPassives(){
+  document.getElementById('pt-avail').textContent=G.passivePts;
+  const grid=document.getElementById('pt-grid');
+  grid.innerHTML=PASSIVES.map(function(p){
+    return '<div style="aspect-ratio:1;border:1px solid '+(G.passives[p.id]?'var(--red)':'var(--border)')+
+      ';border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:'+
+      (G.passives[p.id]?'default':'pointer')+';background:'+(G.passives[p.id]?'rgba(255,70,85,0.16)':'var(--bg3)')+
+      '" data-pt="'+p.id+'">'+p.icon+'</div>';
+  }).join('');
+  grid.querySelectorAll('[data-pt]').forEach(function(n){
+    n.addEventListener('click',function(){
+      const id=n.dataset.pt;
+      if(G.passivePts<=0||G.passives[id])return;
+      G.passives[id]=true;G.passivePts--;
+      const p=PASSIVES.find(function(x){return x.id===id;});
+      switch(p.stat){
+        case'hp':G.maxHp+=p.val;G.hp+=p.val;break;
+        case'mana':G.maxMana+=p.val;G.mana+=p.val;break;
+        case'armor':G.armor+=p.val;break;
+        case'evasion':G.evasion+=p.val;break;
+      }
+      initPassives();
+    });
+  });
+}
+
+// ─── 输入 / 部署 ────────────────────────────────────────────
+function startBattle(){
+  if(G.state!=='ready')return false;
+  if(!G.weapon){
+    openWeaponSelect();
+    showNotification('⚠ 请先选择主武器');
+    return false;
+  }
+  G.state='playing';G.paused=false;G.waveTimer=.2;G.beaconTimer=4;
+  for(let i=0;i<4;i++)deployMinion('rookie');
+  for(let i=0;i<2;i++)deployMinion('rifleman');
+  document.getElementById('btn-auto').textContent='作战进行中';
+  document.getElementById('btn-auto').disabled=true;
+  document.getElementById('auto-badge').style.display='block';
+  showNotification('⚔ 小队已部署 · A/D 选择路线');
+  return true;
+}
+function togglePause(){
+  if(G.state==='ready'){startBattle();return;}
+  if(G.gameOver||G.victory)return;
+  G.paused=!G.paused;
+  document.getElementById('btn-takeover').textContent=G.paused?'▶ 继续':'Ⅱ 暂停';
+}
+document.addEventListener('keydown',function(e){
+  if(G.gameOver)return;
+  const k=e.key.toLowerCase();
+  // 强化三选一：数字键直选
+  if(G.pendingUpgrades.length>0){
+    if(k==='1'||k==='2'||k==='3')pickUpgrade(Number(k)-1);
+    return;
+  }
+  // 出生选枪：数字键直选
+  if(G.state==='ready'&&document.getElementById('modal-weapon').classList.contains('show')){
+    if(k==='1'||k==='2'||k==='3'){
+      const ids=Object.keys(WEAPONS);
+      if(ids[Number(k)-1])chooseWeapon(ids[Number(k)-1]);
+    }
+    return;
+  }
+  if(k==='i'){initInventory();showModal('modal-inv');return;}
+  if(k==='p'){initPassives();showModal('modal-passive');return;}
+  if(k===' '){e.preventDefault();if(G.state==='ready')startBattle();else togglePause();return;}
+  if(G.paused||G.state!=='playing')return;
+  if(k==='a'||k==='arrowleft')G.moveDir=-1;
+  else if(k==='d'||k==='arrowright')G.moveDir=1;
+  else if(['q','w','e','r'].includes(k))useTac(k);
+});
+document.addEventListener('keyup',function(e){
+  const k=e.key.toLowerCase();
+  if((k==='a'||k==='arrowleft')&&G.moveDir===-1)G.moveDir=0;
+  if((k==='d'||k==='arrowright')&&G.moveDir===1)G.moveDir=0;
+});
+
+let dragging=false;
+function steer(clientX){
+  const r=canvas.getBoundingClientRect();
+  G.targetX=Math.max(48,Math.min(CW-48,(clientX-r.left)/r.width*CW));
+}
+canvas.addEventListener('pointerdown',function(e){if(G.state==='ready'){startBattle();return;}dragging=true;steer(e.clientX);if(canvas.setPointerCapture)canvas.setPointerCapture(e.pointerId);});
+canvas.addEventListener('pointermove',function(e){if(dragging)steer(e.clientX);});
+canvas.addEventListener('pointerup',function(){dragging=false;});
+canvas.addEventListener('pointercancel',function(){dragging=false;});
+
+document.getElementById('btn-auto').addEventListener('click',startBattle);
+document.getElementById('btn-takeover').addEventListener('click',togglePause);
+document.getElementById('btn-weapon').addEventListener('click',function(){
+  if(G.state==='ready'){openWeaponSelect();}
+  else showNotification('ℹ 已部署，主武器无法更换');
+});
+
+// 信息面板
+document.getElementById('btn-inv').addEventListener('click',function(){initInventory();showModal('modal-inv');});
+document.getElementById('btn-passive').addEventListener('click',function(){initPassives();showModal('modal-passive');});
+document.getElementById('btn-inv-close').addEventListener('click',function(){hideModal('modal-inv');});
+document.getElementById('btn-pt-close').addEventListener('click',function(){hideModal('modal-passive');});
+
+// 战术技能点击
+document.getElementById('skill-bar').addEventListener('click',function(e){
+  const c=e.target.closest('.skill-card');
+  if(!c||G.paused||G.state!=='playing')return;
+  useTac(c.dataset.skill);
+});
+
+// ─── 主循环 ─────────────────────────────────────────────────
+function loop(ts){
+  G.dt=Math.min(0.1,(ts-G.lastT)/1000);G.lastT=ts;
+  battleUpdate(G.dt);render();updateUI();
+  // 升级三选一会暂停战斗，直到玩家选完一张
+  if(G.pendingUpgrades.length>0){
+    if(!document.getElementById('modal-drop').classList.contains('show'))showUpgradeModal();
+  }
+  requestAnimationFrame(loop);
+}
+
+// ─── 初始化 ─────────────────────────────────────────────────
+function init(){
+  let prog=0;
+  const bar=document.getElementById('load-bar');
+  const status=document.getElementById('load-status');
+  const msgs=['建立源能连接...','载入特工数据...','部署战场...','连接完成'];
+  const iv=setInterval(function(){
+    prog+=Math.random()*15+5;
+    if(prog>=100){
+      prog=100;clearInterval(iv);status.textContent=msgs[3];
+      setTimeout(function(){
+        document.getElementById('loading').classList.add('gone');
+        document.getElementById('game').style.display='block';
+        // 与 Ashfall 一致：只有点击部署才真正开战
+        G.state='ready';G.paused=false;G.beaconTimer=4;
+        document.getElementById('auto-badge').style.display='none';
+        openWeaponSelect();
+        G.lastT=performance.now();
+        requestAnimationFrame(loop);
+      },500);
+    }else{status.textContent=msgs[Math.min(2,Math.floor(prog/34))];}
+    bar.style.width=prog+'%';
+  },200);
+}
+
+init();
+</script>
+</body>
+</html>
